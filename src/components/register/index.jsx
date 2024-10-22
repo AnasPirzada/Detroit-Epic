@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import Header from '../header/Header';
+
 export default function Register() {
   const [agreed, setAgreed] = useState(false);
   return (
     <>
-      <Header />
       <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-sm">
         <h1 className="text-2xl font-bold mb-6">Create your account</h1>
         <form className="space-y-4">

@@ -1,46 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+
 import { Link } from 'react-router-dom';
 export default function login() {
   return (
     <div className="min-h-screen bg-white">
-      <header className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
-        <div className="flex items-center space-x-6">
-          <Link to={'/'}>
-            <h1 className="text-xl font-bold">Epic Weekend</h1>
-          </Link>
-          <nav>
-            <ul className="flex space-x-4">
-              <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  Explore
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  Your Trips
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  For Hosts
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input
-              type="search"
-              placeholder="Search"
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-      </header>
       <main className="flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <h2 className="text-3xl font-bold text-center mb-8">Welcome back</h2>
