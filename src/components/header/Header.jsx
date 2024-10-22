@@ -10,9 +10,11 @@ const Header = () => {
             <div className="text-2xl font-bold">DEW</div>
           </Link>
           <div className="space-x-4">
-            <a href="#features" className="hover:text-gray-300">
-              Features
-            </a>
+            <Link to={'/faq'}>
+              <a href="#features" className="hover:text-gray-300">
+                FAQ
+              </a>
+            </Link>
             <Link to={'/experience'}>
               <a href="#experiences" className="hover:text-gray-300">
                 Experiences
