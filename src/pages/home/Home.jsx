@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const Home = () => {
   return (
     <div className="h-screen relative bg-gray-800 text-white flex items-center justify-between w-[100%] flex-col">
@@ -6,9 +8,12 @@ const Home = () => {
           Discover Detroits Hidden Gems
         </h1>
         <p className="text-xl mb-8">Plan Your Epic Weekend with DEW</p>
-        <button className="bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-200">
-          Get Started
-        </button>
+
+        <Link to={'/register'}>
+          <button className="bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-200">
+            Get Started
+          </button>
+        </Link>
       </div>
     </div>
   );
