@@ -1,3 +1,4 @@
+import WhatOurUsersSay from '@/components/whatOurUsersSay';
 import { Link } from 'react-router-dom';
 
 const Experience = () => {
@@ -15,8 +16,7 @@ const Experience = () => {
     {
       id: 2,
       title: 'Eastern Market Food Tour',
-      description:
-        "Savor the flavors of Detroit's historic farmers market.",
+      description: "Savor the flavors of Detroit's historic farmers market.",
       img: 'https://images.unsplash.com/photo-1461237439866-5a557710c921?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       rating: 4.5,
       reviews: 100,
@@ -74,7 +74,9 @@ const Experience = () => {
               className="w-full h-48 object-cover mb-4"
             />
             <h3 className="text-xl font-semibold mb-2">{experience.title}</h3>
-            <p className="mb-2 font-medium">Rating: {experience.rating} ({experience.reviews} reviews)</p>
+            <p className="mb-2 font-medium">
+              Rating: {experience.rating} ({experience.reviews} reviews)
+            </p>
             <p className="mb-4">{experience.description}</p>
             <Link
               to={`/experience/${experience.id}`}
@@ -85,6 +87,8 @@ const Experience = () => {
           </div>
         ))}
       </div>
+
+      <WhatOurUsersSay />
     </div>
   );
 };
