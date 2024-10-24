@@ -73,10 +73,6 @@ export const routes = createBrowserRouter([
         element: <HowItWorks />,
       },
       {
-        path: "/guid",
-        element: <HowItWorks />,
-      },
-      {
         path: "/guide",
         element: <DetroitEpicWeekend />,
       },

@@ -18,18 +18,24 @@ const Footer = () => {
           &copy; 2024 Detroit Experience Wrapper. All rights reserved.
         </p>
         <nav className="flex justify-center space-x-4 text-sm mt-2">
-          <a href="/about" className="text-gray-600">
+          <Link to="/about" className="text-gray-600">
             About Us
-          </a>
-          <a href="/contact" className="text-gray-600">
+          </Link>
+          <Link to="/contact" className="text-gray-600">
             Contact
-          </a>
-          <a href="/privacy" className="text-gray-600">
+          </Link>
+          <Link to="/privacy-policy" className="text-gray-600">
             Privacy Policy
-          </a>
-          <a href="/terms" className="text-gray-600">
-            Terms of Service
-          </a>
+          </Link>
+          <Link to="/terms-and-conditions" className="text-gray-600">
+            Terms of Conditions
+          </Link>
+          <Link to="/guide" className="text-gray-600">
+            Guide
+          </Link>
+          <Link to="/work" className="text-gray-600">
+            How its Work
+          </Link>
         </nav>
       </div>
     </footer>
