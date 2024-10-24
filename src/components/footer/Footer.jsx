@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -7,7 +7,7 @@ const Footer = () => {
         <h2 className="text-xl font-bold mb-4">Ready to Explore Detroit?</h2>
         <p>Join DEW today and start planning your unforgettable experiences.</p>
 
-        <Link to={'/register'}>
+        <Link to={"/register"}>
           <button className="bg-black text-white py-2 px-4 mt-4">
             Sign Up Now
           </button>
