@@ -1,8 +1,8 @@
 import apiClient from '../utils/apiClient.js';
 
-const LoginApi = async () => {
+const LoginApi = async data => {
   try {
-    const response = await apiClient.get(`/auth/login`);
+    const response = await apiClient.post(`/auth/login`, data); // Pass data in post request
     return response.data;
   } catch (error) {
     console.error('Error fetching user:', error);
