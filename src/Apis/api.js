@@ -33,7 +33,7 @@ const GetProfile = async () => {
 };
 const UpdateProfile = async data => {
   try {
-    const response = await apiClient.post('/profiles/update', data);
+    const response = await apiClient.put('/profiles/update', data);
     return response.data;
   } catch (error) {
     console.error('Error saving result:', error);

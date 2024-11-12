@@ -50,21 +50,44 @@ export default function UserDashboard() {
   const [showNotifications, setShowNotifications] = useState(false); // State to toggle notifications
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State for edit profile modal
   const [budget, setBudget] = useState(0); // State for edit profile modal
+  const [isLoading, setIsLoading] = useState(true);
+  const [editData, setEditData] = useState({ fullName: '', email: '' });
+
 
   useEffect(() => {
-    // Fetch the profile data when component mounts
-    const fetchProfile = async () => {
-      try {
-        const response = await userApi.GetProfile();
-        console.log('response', response);
-        setProfileData(response);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      }
-    };
-
     fetchProfile();
   }, []);
+
+  const fetchProfile = async () => {
+    setIsLoading(true);
+    try {
+      const response = await userApi.GetProfile();
+      setProfileData(response);
+      setEditData({ fullName: response.fullName, email: response.email });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+    setIsLoading(false);
+  };
+
+
+  const handleUpdateProfile = async () => {
+    try {
+      await userApi.UpdateProfile({
+        fullName: editData.fullName,
+        email: editData.email,
+      });
+      setIsEditModalOpen(false);
+      fetchProfile(); // Re-fetch profile data to get updated details
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+
+
+
+
 
   const itineraries = [
     {
@@ -92,12 +115,9 @@ export default function UserDashboard() {
     creditsNeeded: 100,
     friendsReferred: 3,
   };
-  if (!profileData)
-    return (
-      <>
-        <Loader />
-      </>
-    );
+   if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className='container mx-auto p-4'>
@@ -180,27 +200,17 @@ export default function UserDashboard() {
                     <DialogTitle>Edit Profile</DialogTitle>
                   </DialogHeader>
                   <div className='space-y-4'>
-                    <Input
-                      placeholder='Full Name'
-                      defaultValue={profileData.fullName}
-                      onChange={e =>
-                        setProfileData({
-                          ...profileData,
-                          fullName: e.target.value,
-                        })
-                      }
-                    />
-                    <Input
-                      placeholder='Email'
-                      defaultValue={profileData.email}
-                      onChange={e =>
-                        setProfileData({
-                          ...profileData,
-                          email: e.target.value,
-                        })
-                      }
-                    />
-                    <Button onClick={() => setIsEditModalOpen(false)}>
+                  <Input
+                  placeholder="Full Name"
+                  value={editData.fullName}
+                  onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
+                />
+                <Input
+                  placeholder="Email"
+                  value={editData.email}
+                  onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                />
+                    <Button onClick={handleUpdateProfile}>
                       Save Changes
                     </Button>
                   </div>
