@@ -53,7 +53,6 @@ export default function UserDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [editData, setEditData] = useState({ fullName: '', email: '' });
 
-
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -70,7 +69,6 @@ export default function UserDashboard() {
     setIsLoading(false);
   };
 
-
   const handleUpdateProfile = async () => {
     try {
       await userApi.UpdateProfile({
@@ -83,11 +81,6 @@ export default function UserDashboard() {
       console.error('Error updating profile:', error);
     }
   };
-
-
-
-
-
 
   const itineraries = [
     {
@@ -115,7 +108,7 @@ export default function UserDashboard() {
     creditsNeeded: 100,
     friendsReferred: 3,
   };
-   if (isLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
@@ -184,9 +177,6 @@ export default function UserDashboard() {
                 <p>
                   <strong>Credits Earned:</strong> {profileData.creditsEarned}
                 </p>
-                <p>
-                  <strong>Role:</strong> {profileData.role}
-                </p>
               </div>
 
               <Button onClick={() => setIsEditModalOpen(true)}>
@@ -200,19 +190,21 @@ export default function UserDashboard() {
                     <DialogTitle>Edit Profile</DialogTitle>
                   </DialogHeader>
                   <div className='space-y-4'>
-                  <Input
-                  placeholder="Full Name"
-                  value={editData.fullName}
-                  onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
-                />
-                <Input
-                  placeholder="Email"
-                  value={editData.email}
-                  onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                />
-                    <Button onClick={handleUpdateProfile}>
-                      Save Changes
-                    </Button>
+                    <Input
+                      placeholder='Full Name'
+                      value={editData.fullName}
+                      onChange={e =>
+                        setEditData({ ...editData, fullName: e.target.value })
+                      }
+                    />
+                    <Input
+                      placeholder='Email'
+                      value={editData.email}
+                      onChange={e =>
+                        setEditData({ ...editData, email: e.target.value })
+                      }
+                    />
+                    <Button onClick={handleUpdateProfile}>Save Changes</Button>
                   </div>
                 </DialogContent>
               </Dialog>

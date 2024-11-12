@@ -18,7 +18,7 @@ export default function Login() {
       const Token = response.token;
       localStorage.setItem('Token', Token);
       toast.success('login Successfully');
-      navigate('/');
+      navigate('/user-profile');
     } catch (error) {
       console.error('Login failed:', error);
       toast.error('Please check Your Credentials ');

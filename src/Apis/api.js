@@ -60,6 +60,15 @@ const CreateBlog = async data => {
     throw error;
   }
 };
+const Getexperiences = async () => {
+  try {
+    const response = await apiClient.get(`/experiences`);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting Experiences:', error);
+    throw error;
+  }
+};
 export default {
   LoginApi,
   Signup,
@@ -67,4 +76,5 @@ export default {
   UpdateProfile,
   GetBlogs,
   CreateBlog,
+  Getexperiences,
 };
