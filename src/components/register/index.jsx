@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { FaFacebookF, FaGoogle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { userApi } from '../../Apis/index.jsx';
@@ -14,7 +15,7 @@ export default function Register() {
     password: '',
     dob: '',
   });
-
+  const navigate = useNavigate();
   const handleInputChange = e => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
@@ -30,6 +31,7 @@ export default function Register() {
       const response = await userApi.Signup(formData);
       console.log('Signup successful:', response);
       toast.success('Signup successful!');
+      navigate('/login');
     } catch (error) {
       console.error('Signup error:', error);
       toast.error('Signup failed. Please try again.');
