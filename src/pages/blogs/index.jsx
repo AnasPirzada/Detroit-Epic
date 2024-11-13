@@ -76,12 +76,12 @@ export default function BlogPage() {
     <div className='container mx-auto px-4 py-8'>
       <h1 className='text-3xl font-bold mb-6'>DEW Blog</h1>
 
-      {/* Share Your Experience Button */}
+      {/* Create blog Button */}
       <button
         onClick={() => setIsModalOpen(true)}
         className='bg-blue-500 text-black border p-2 rounded mb-6'
       >
-        Share Your Experience
+        Create Blog{' '}
       </button>
 
       {/* Modal for Submission Form */}
@@ -91,6 +91,7 @@ export default function BlogPage() {
           setIsModalOpen(false);
           fetchBlogs(); // Refresh blogs when modal closes
         }}
+        mode='blog'
         newPost={newPost}
         setNewPost={setNewPost}
         handleSubmit={handleSubmit}

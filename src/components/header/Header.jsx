@@ -50,27 +50,29 @@ const Header = () => {
               </a>
             </Link>
           ) : (
-            <Link to={'/logout'}>
-              <a
-                href='#logout'
-                className='hover:text-gray-300'
-                onClick={() => {
-                  localStorage.removeItem('Token'); // Remove token on logout
-                  setToken(null); // Update state immediately
-                }}
-              >
-                Logout
-              </a>
-            </Link>
+            <>
+              <Link to={'/logout'}>
+                <a
+                  href='#logout'
+                  className='hover:text-gray-300'
+                  onClick={() => {
+                    localStorage.removeItem('Token'); // Remove token on logout
+                    setToken(null); // Update state immediately
+                  }}
+                >
+                  Logout
+                </a>
+              </Link>
+              <Link to={'/user-profile'}>
+                <a
+                  href='#signup'
+                  className='bg-white text-black px-4 py-2 rounded hover:bg-gray-200'
+                >
+                  Profile
+                </a>
+              </Link>
+            </>
           )}
-          <Link to={'/user-profile'}>
-            <a
-              href='#signup'
-              className='bg-white text-black px-4 py-2 rounded hover:bg-gray-200'
-            >
-              Profile
-            </a>
-          </Link>
         </div>
       </nav>
     </header>

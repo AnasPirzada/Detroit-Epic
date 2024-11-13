@@ -17,13 +17,13 @@ const testimonials = [
 
 const WhatOurUsersSay = () => {
   return (
-    <section className="p-8 bg-gray-100 text-center">
-      <h2 className="text-xl font-bold mb-6">What Our Users Say</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <section className='p-8 mt-10 bg-gray-100 text-center'>
+      <h2 className='text-xl font-bold mb-6'>What Our Users Say</h2>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
         {testimonials.map((user, index) => (
-          <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-            <p className="text-lg italic">{user.quote}</p>
-            <p className="mt-4 font-bold">{user.name}</p>
+          <div key={index} className='bg-white p-6 rounded-lg shadow-md'>
+            <p className='text-lg italic'>{user.quote}</p>
+            <p className='mt-4 font-bold'>{user.name}</p>
           </div>
         ))}
       </div>

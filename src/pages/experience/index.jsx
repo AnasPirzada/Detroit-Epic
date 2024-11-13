@@ -1,4 +1,5 @@
 import Loader from '@/components/loader';
+import ShareExperienceModal from '@/components/shareExperinceModal';
 import WhatOurUsersSay from '@/components/whatOurUsersSay';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -7,6 +8,14 @@ import { userApi } from '../../Apis/index.jsx';
 const Experience = () => {
   const [experiences, setExperiences] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [newExperiencePost, setnewExperiencePost] = useState({
+    title: '',
+    category: '',
+    description: '',
+    image: '',
+    date: '',
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch experiences from API
   const fetchExperiences = async () => {
@@ -25,6 +34,29 @@ const Experience = () => {
     fetchExperiences();
   }, []);
 
+  // Handle new post submission
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      await userApi.CreateExperiences(newExperiencePost);
+      alert('Exerience created successfully!');
+      setnewExperiencePost({
+        title: '',
+        category: '',
+        description: '',
+        image: '',
+        date: '',
+      });
+      setIsModalOpen(false);
+      await fetchExperiences(); // Refresh blogs after submission
+    } catch (error) {
+      console.error('Failed to create Exerience:', error);
+      alert(
+        'An error occurred while creating the Exerience. Please try again.'
+      );
+    }
+  };
+
   return (
     <div className='container mx-auto p-6'>
       <div className='grid grid-cols-2 md:grid-cols-4 gap-6 mb-10'>
@@ -32,6 +64,8 @@ const Experience = () => {
           <h3 className='text-xl font-semibold mb-2'>Curated Experiences</h3>
           <p>Handpicked local adventures</p>
         </div>
+        {/* Share Your Experience Button */}
+
         <div className='p-4 bg-white shadow rounded-lg'>
           <h3 className='text-xl font-semibold mb-2'>Live Events</h3>
           <p>Up-to-date concert and event listings</p>
@@ -45,7 +79,12 @@ const Experience = () => {
           <p>Instagram-worthy locations</p>
         </div>
       </div>
-
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className='bg-blue-500 text-black border p-2 rounded mb-6'
+      >
+        Share Your Experience{' '}
+      </button>
       <h2 className='text-3xl font-semibold mb-6'>
         Featured Detroit Experiences
       </h2>
@@ -87,7 +126,17 @@ const Experience = () => {
           ))}
         </div>
       )}
-
+      <ShareExperienceModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          fetchExperiences(); // Refresh blogs when modal closes
+        }}
+        mode='experience'
+        newExperiencePost={newExperiencePost}
+        setnewExperiencePost={setnewExperiencePost} // Passing the correct update function
+        handleSubmit={handleSubmit}
+      />
       <WhatOurUsersSay />
     </div>
   );
