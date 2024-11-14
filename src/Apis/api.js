@@ -78,6 +78,24 @@ const CreateExperiences = async data => {
     throw error;
   }
 };
+const Getreviews = async () => {
+  try {
+    const response = await apiClient.get(`/reviews`);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting Reviews:', error);
+    throw error;
+  }
+};
+const CreateReviews = async data => {
+  try {
+    const response = await apiClient.post('/reviews/add', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error Adding Reviews:', error);
+    throw error;
+  }
+};
 export default {
   LoginApi,
   Signup,
@@ -87,4 +105,6 @@ export default {
   CreateBlog,
   Getexperiences,
   CreateExperiences,
+  CreateReviews,
+  Getreviews,
 };

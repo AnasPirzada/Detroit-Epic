@@ -1,13 +1,12 @@
 import { Button } from '@/components/ui/button';
-import
-  {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
 import { userApi } from '../../Apis/index.jsx';
@@ -18,26 +17,25 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import
-  {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-  } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import
-  {
-    Bell,
-    ClipboardCopy,
-    Facebook,
-    Instagram,
-    Mail,
-    Share2,
-  } from 'lucide-react';
+import {
+  Bell,
+  ClipboardCopy,
+  Facebook,
+  Instagram,
+  Mail,
+  Share2,
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Dummy notifications
 const notifications = [
@@ -50,6 +48,7 @@ export default function UserDashboard() {
   const [profileData, setProfileData] = useState(null);
   const [activeTab, setActiveTab] = useState('profile');
   const [selectedItinerary, setSelectedItinerary] = useState(null);
+  const [SuggestionsAi, setSelectedSuggestionsAi] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false); // State to toggle notifications
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State for edit profile modal
   const [budget, setBudget] = useState(0); // State for edit profile modal
@@ -119,14 +118,13 @@ export default function UserDashboard() {
     <div className='container mx-auto p-4'>
       <h1 className='text-3xl font-bold mb-6'>User Dashboard</h1>
       <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>
-        <TabsList className='grid w-full grid-cols-4'>
+        <TabsList className='grid w-full grid-cols-5'>
           <TabsTrigger value='profile'>Profile</TabsTrigger>
           <TabsTrigger value='itineraries'>Itineraries</TabsTrigger>
           <TabsTrigger value='referrals'>Referrals</TabsTrigger>
           <TabsTrigger value='add-itinerary'>Add Itinerary</TabsTrigger>{' '}
-          {/* New tab */}
+          <TabsTrigger value='add-Ai'>AI</TabsTrigger> {/* New tab */}
         </TabsList>
-
         {/* Profile Tab */}
         <TabsContent value='profile'>
           <Card>
@@ -214,7 +212,6 @@ export default function UserDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value='itineraries'>
           <Card>
             <CardHeader>
@@ -291,7 +288,6 @@ export default function UserDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value='referrals'>
           <Card>
             <CardHeader>
@@ -387,7 +383,6 @@ export default function UserDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value='add-itinerary'>
           <div className='border rounded-lg p-6'>
             <div className='mb-6'>
@@ -571,6 +566,125 @@ export default function UserDashboard() {
                     <Button onClick={() => setSelectedItinerary(null)}>
                       Save Itinerary
                     </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        </TabsContent>{' '}
+        <TabsContent value='add-Ai'>
+          <div className='border rounded-lg p-6'>
+            <div className='mb-6'>
+              <h2 className='text-xl font-semibold'>Itinerary Suggestion</h2>
+            </div>
+            <Button onClick={() => setSelectedSuggestionsAi({})}>
+              Suggestions
+            </Button>
+
+            {/* Modal to Add Itinerary */}
+            {SuggestionsAi && (
+              <Dialog
+                open={Boolean(SuggestionsAi)}
+                onOpenChange={setSelectedSuggestionsAi}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Data To see Suggestions</DialogTitle>
+                    <DialogDescription>
+                      Fill in the details to See Suggestions.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  {/* Form Content */}
+                  <div className='space-y-4'>
+                    {/* Day of Stay*/}
+                    <div>
+                      <Label>Day of Stay</Label>
+                      <select className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'>
+                        <option value='' disabled selected></option>{' '}
+                        <option value='1'>1</option>
+                        <option value='2'>2</option>
+                        <option value='3'>3</option>
+                        <option value='3'>4</option>
+                      </select>
+                    </div>
+                    {/* Purpose of visit */}
+                    <div>
+                      <Label>Purpose of visit</Label>
+                      <select className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'>
+                        <option value='' disabled selected></option>
+                        <option value='Romantic'>Romantic</option>
+                        <option value='Group'>Group</option>
+                        <option value='Solo'>Solo</option>
+                      </select>
+                    </div>
+                    {/* Budget */}
+                    <div>
+                      <Label>Budget</Label>
+                      <select className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'>
+                        <option value='' disabled selected></option>
+                        <option value='Under $200'>Under $200</option>
+                        <option value='$200-$500'>$200-$500</option>
+                        <option value='over $500'>over $500</option>
+                      </select>
+                    </div>{' '}
+                    {/* Date */}
+                    <div>
+                      <Label>Date</Label>
+                      <input
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        type='date'
+                        placeholder=''
+                      />
+                    </div>
+                    {/* Interests */}
+                    <div>
+                      <Label>Interests</Label>
+                      <div className='grid grid-cols-2 gap-2'>
+                        <div>
+                          <Checkbox id='music' />
+                          <Label htmlFor='music' className='ml-2'>
+                            Music
+                          </Label>
+                        </div>
+                        <div>
+                          <Checkbox id='sports' />
+                          <Label htmlFor='sports' className='ml-2'>
+                            Sports
+                          </Label>
+                        </div>
+                        <div>
+                          <Checkbox id='food' />
+                          <Label htmlFor='food' className='ml-2'>
+                            Food
+                          </Label>
+                        </div>
+                        <div>
+                          <Checkbox id='art' />
+                          <Label htmlFor='art' className='ml-2'>
+                            Art
+                          </Label>
+                        </div>
+                        <div>
+                          <Checkbox id='nightlife' />
+                          <Label htmlFor='nightlife' className='ml-2'>
+                            Nightlife
+                          </Label>
+                        </div>
+                        <div>
+                          <Checkbox id='history' />
+                          <Label htmlFor='history' className='ml-2'>
+                            History
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Submit Button */}
+                    <Link to='/ai'>
+                      <Button onClick={() => setSelectedItinerary(null)}>
+                        Save Itinerary
+                      </Button>
+                    </Link>
                   </div>
                 </DialogContent>
               </Dialog>
