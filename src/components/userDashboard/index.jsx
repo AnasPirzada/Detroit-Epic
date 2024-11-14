@@ -420,7 +420,24 @@ export default function UserDashboard() {
                         <option value='other'>Other</option>
                       </select>
                     </div>
-
+                    {/* Date */}
+                    <div>
+                      <Label>Name</Label>
+                      <input
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        type='text'
+                        placeholder='Add Name'
+                      />
+                    </div>
+                    {/* Date */}
+                    <div>
+                      <Label>Date</Label>
+                      <input
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        type='date'
+                        placeholder=''
+                      />
+                    </div>
                     {/* Duration */}
                     <div>
                       <Label>Duration</Label>
@@ -681,8 +698,11 @@ export default function UserDashboard() {
                     </div>
                     {/* Submit Button */}
                     <Link to='/ai'>
-                      <Button onClick={() => setSelectedItinerary(null)}>
-                        Save Itinerary
+                      <Button
+                        className='mt-4'
+                        onClick={() => setSelectedItinerary(null)}
+                      >
+                        Get Suggestions{' '}
                       </Button>
                     </Link>
                   </div>

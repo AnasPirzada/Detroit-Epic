@@ -13,6 +13,7 @@ export default function Register() {
     email: '',
     fullName: '',
     password: '',
+    ReferalCode: '',
     dob: '',
   });
   const navigate = useNavigate();
@@ -75,6 +76,7 @@ export default function Register() {
             className='w-full bg-gray-50'
           />
         </div>
+
         <div>
           <label
             htmlFor='password'
@@ -113,6 +115,24 @@ export default function Register() {
             You must be at least 18 years old to use Detroit Epic Weekend
           </p>
         </div>
+
+        <div>
+          <label
+            htmlFor='code'
+            className='block text-sm font-medium text-gray-700 mb-1'
+          >
+            Add Referal Code{' '}
+          </label>
+          <Input
+            type='text'
+            id='ReferalCode'
+            placeholder='23857303'
+            value={formData.ReferalCode}
+            onChange={handleInputChange}
+            className='w-full bg-gray-50'
+          />
+        </div>
+
         <div className='flex items-center space-x-2'>
           <input
             type='checkbox'
