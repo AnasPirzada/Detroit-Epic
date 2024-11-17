@@ -45,7 +45,11 @@ const notifications = [
 ];
 
 export default function UserDashboard() {
-  const [itineraryData, setGetitinerary] = useState(null);
+  const [itineraryData, setGetitinerary] = useState([]);
+  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
+  const [generatedSuggestions, setGeneratedSuggestions] = useState(false); // Track if suggestions have been generated
+  const [itineraryLoadingState, setItineraryLoadingState] = useState({});
+
   const [profileData, setProfileData] = useState(null);
   const [activeTab, setActiveTab] = useState('profile');
   const [selectedItinerary, setSelectedItinerary] = useState(null);
@@ -157,32 +161,100 @@ export default function UserDashboard() {
   // itinerary logic end
 
   // Get All itinerary
+
   useEffect(() => {
     fetchItinerary();
   }, []);
-
+  // Function to fetch itinerary data
   const fetchItinerary = async () => {
     setIsLoading(true);
     try {
       const response = await userApi.Getitineraries();
       console.log(response);
 
-      setGetitinerary(response);
+      // Ensure response is an array before setting the state
+      if (Array.isArray(response)) {
+        setGetitinerary(response);
+      } else {
+        console.error('Fetched data is not an array:', response);
+      }
     } catch (error) {
-      console.error('Error fetching Itinerary:', error);
+      console.error('Error fetching itineraries:', error);
     }
     setIsLoading(false);
   };
 
-  // Create Referals
+  // Handle generating suggestions for a specific itinerary
+  const handleGenerateSuggestions = async itinerary => {
+    // Set the specific itinerary as loading
+    console.log('comming', itinerary);
 
+    setItineraryLoadingState(prevState => ({
+      ...prevState,
+      [itinerary._id]: true,
+    }));
+
+    try {
+      const id = itinerary._id;
+      console.log('itineraryid', id);
+
+      // Call API to generate suggestions
+      const response = await userApi.FetchItinerarySuggestions(id);
+      console.log('Suggestions generated:', response);
+
+      // Once suggestions are generated, fetch the updated itinerary with suggestions
+      fetchItinerary();
+
+      // Mark the suggestions as generated for that itinerary
+      setGeneratedSuggestions(false);
+    } catch (error) {
+      console.error('Error generating suggestions:', error);
+    } finally {
+      // Reset the loading state for this specific itinerary after the request completes
+      setItineraryLoadingState(prevState => ({
+        ...prevState,
+        [itinerary._id]: false,
+      }));
+    }
+  };
+
+  // Handle navigating to AI page with suggestions data
+  const handleSeeSuggestions = async itinerary => {
+    console.log('comming', itinerary);
+    try {
+      // Fetch suggestions
+      const id = itinerary._id;
+      console.log('current itineraries id', id);
+
+      const response = await userApi.getSuggestions(id);
+      console.log('Fetched suggestions:', response);
+
+      // Navigate to AI page with suggestions
+      navigate('/ai', { state: { suggestions: response } });
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+    }
+  };
+
+  // Create Referals
   const handleCreatereferralsSubmit = async () => {
     try {
       const response = await userApi.Createreferrals();
       const responsereferralsstatus = await userApi.Createreferralsstatus();
+      const responseGetreferralscredits = await userApi.Getreferralscredits();
       setreferalcode(response.referralCode);
-      console.log('second api response', responsereferralsstatus.creditsEarned);
-      const credtiearns = responsereferralsstatus.creditsEarned;
+      console.log(
+        'response',
+        response,
+        responsereferralsstatus,
+        responseGetreferralscredits
+      );
+
+      console.log(
+        'second api response',
+        responseGetreferralscredits.creditsEarned
+      );
+      const credtiearns = responseGetreferralscredits.creditsEarned;
       setreferalcodestatus(credtiearns);
 
       toast.success(response.message);
@@ -266,10 +338,13 @@ export default function UserDashboard() {
               <div className='space-y-2'>
                 <p>
                   <strong>Date of Birth:</strong>{' '}
-                  {new Date(profileData.dob).toLocaleDateString()}
+                  {profileData?.dob
+                    ? new Date(profileData.dob).toLocaleDateString()
+                    : 'Not provided'}
                 </p>
+
                 <p>
-                  <strong>Credits Earned:</strong> {profileData.creditsEarned}
+                  <strong>Credits Earned:</strong> {profileData?.creditsEarned}
                 </p>
               </div>
 
@@ -314,126 +389,187 @@ export default function UserDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {itineraryData && itineraryData.length > 0 ? (
-                <ul className='space-y-4'>
-                  {itineraryData.map(itinerary => (
-                    <li
-                      key={itinerary.id}
-                      className='flex justify-between items-center'
-                    >
-                      <div>
-                        <h3 className='font-semibold'>{itinerary.title}</h3>
-                        <p className='text-sm text-gray-500'>
-                          {itinerary.startDate}
-                        </p>
-                      </div>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <div className='flex space-x-2'>
-                            <Button
-                              variant='outline'
-                              onClick={() => setSelectedItinerary(itinerary)}
-                            >
-                              View
-                            </Button>
-                            <Button
-                              variant='outline'
-                              onClick={() => {
-                                navigate('/ai', { state: { itinerary } });
-                              }}
-                            >
-                              See Suggestions
-                            </Button>
-                          </div>
-                        </DialogTrigger>
+              <div>
+                {isLoading ? (
+                  <div className='skeleton-loader'>
+                    <div role='status' className='max-w-sm animate-pulse'>
+                      <div className='h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4'></div>
+                      <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5'></div>
+                      <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5'></div>
+                      <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5'></div>
+                      <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5'></div>
+                      <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]'></div>
+                      <span className='sr-only'>Loading...</span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {itineraryData && itineraryData.length > 0 ? (
+                      <ul className='space-y-4'>
+                        {itineraryData.map(itinerary => (
+                          <li
+                            key={itinerary.id}
+                            className='flex justify-between items-center'
+                          >
+                            <h3 className='font-semibold'>{itinerary.title}</h3>
+                            <p className='text-sm text-gray-500'>
+                              {itinerary.startDate}
+                            </p>
 
-                        <DialogContent className='sm:max-w-[425px]'>
-                          <DialogHeader>
-                            <DialogTitle>Share Your Itinerary</DialogTitle>
-                            <DialogDescription>
-                              {itinerary.destination ||
-                                'No destination specified'}
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className='grid gap-4 py-4'>
-                            <div className='grid grid-cols-4 items-center gap-4'>
-                              <img
-                                src='/placeholder.svg'
-                                alt={itinerary.name || 'Itinerary Image'}
-                                className='col-span-4 h-40 w-full object-cover rounded-md'
-                              />
-                            </div>
+                            <div className='flex'>
+                              <div className='me-4'>
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <div className='flex'>
+                                      <Button
+                                        variant='outline'
+                                        onClick={() =>
+                                          setSelectedItinerary(itinerary)
+                                        }
+                                      >
+                                        View
+                                      </Button>
+                                    </div>
+                                  </DialogTrigger>
 
-                            {/* Social Media Links */}
-                            <div className='flex space-x-2'>
-                              {itinerary.shareLinks?.facebook && (
-                                <a
-                                  href={itinerary.shareLinks.facebook}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  className='text-blue-600'
-                                >
-                                  <Button variant='outline' size='icon'>
-                                    <Facebook className='h-4 w-4' />
-                                  </Button>
-                                </a>
-                              )}
-                              {itinerary.shareLinks?.instagram && (
-                                <a
-                                  href={itinerary.shareLinks.instagram}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  className='text-pink-500'
-                                >
-                                  <Button variant='outline' size='icon'>
-                                    <Instagram className='h-4 w-4' />
-                                  </Button>
-                                </a>
-                              )}
-                              {itinerary.shareLinks?.tiktok && (
-                                <a
-                                  href={itinerary.shareLinks.tiktok}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  className='text-black'
-                                >
-                                  <Button variant='outline' size='icon'>
-                                    <Share2 className='h-4 w-4' />
-                                  </Button>
-                                </a>
-                              )}
-                            </div>
+                                  <DialogContent className='sm:max-w-[425px]'>
+                                    <DialogHeader>
+                                      <DialogTitle>
+                                        Share Your Itinerary
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        {itinerary.destination ||
+                                          'No destination specified'}
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className='grid gap-4 py-4'>
+                                      <div className='grid grid-cols-4 items-center gap-4'>
+                                        <img
+                                          src='/placeholder.svg'
+                                          alt={
+                                            itinerary.name || 'Itinerary Image'
+                                          }
+                                          className='col-span-4 h-40 w-full object-cover rounded-md'
+                                        />
+                                      </div>
 
-                            {/* Copy Itinerary Link */}
-                            <div className='flex items-center space-x-2'>
-                              <Input
-                                id='itinerary-link'
-                                value={`https://visit-detroit.com/itinerary/${itinerary._id}`}
-                                readOnly
-                              />
-                              <Button
-                                size='sm'
-                                className='shrink-0'
-                                onClick={() =>
-                                  navigator.clipboard.writeText(
-                                    `https://visit-detroit.com/itinerary/${itinerary._id}`
-                                  )
-                                }
-                              >
-                                Copy
-                              </Button>
+                                      {/* Social Media Links */}
+                                      <div className='flex space-x-2'>
+                                        {itinerary.shareLinks?.facebook && (
+                                          <a
+                                            href={itinerary.shareLinks.facebook}
+                                            target='_blank'
+                                            rel='noopener noreferrer'
+                                            className='text-blue-600'
+                                          >
+                                            <Button
+                                              variant='outline'
+                                              size='icon'
+                                            >
+                                              <Facebook className='h-4 w-4' />
+                                            </Button>
+                                          </a>
+                                        )}
+                                        {itinerary.shareLinks?.instagram && (
+                                          <a
+                                            href={
+                                              itinerary.shareLinks.instagram
+                                            }
+                                            target='_blank'
+                                            rel='noopener noreferrer'
+                                            className='text-pink-500'
+                                          >
+                                            <Button
+                                              variant='outline'
+                                              size='icon'
+                                            >
+                                              <Instagram className='h-4 w-4' />
+                                            </Button>
+                                          </a>
+                                        )}
+                                        {itinerary.shareLinks?.tiktok && (
+                                          <a
+                                            href={itinerary.shareLinks.tiktok}
+                                            target='_blank'
+                                            rel='noopener noreferrer'
+                                            className='text-black'
+                                          >
+                                            <Button
+                                              variant='outline'
+                                              size='icon'
+                                            >
+                                              <Share2 className='h-4 w-4' />
+                                            </Button>
+                                          </a>
+                                        )}
+                                      </div>
+
+                                      {/* Copy Itinerary Link */}
+                                      <div className='flex items-center space-x-2'>
+                                        <Input
+                                          id='itinerary-link'
+                                          value={`https://visit-detroit.com/itinerary/${itinerary._id}`}
+                                          readOnly
+                                        />
+                                        <Button
+                                          size='sm'
+                                          className='shrink-0'
+                                          onClick={() =>
+                                            navigator.clipboard.writeText(
+                                              `https://visit-detroit.com/itinerary/${itinerary._id}`
+                                            )
+                                          }
+                                        >
+                                          Copy
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+                              </div>
+
+                              {/* Buttons outside the DialogTrigger */}
+                              <div className='flex space-x-2'>
+                                {/* Conditionally render button based on activities */}
+                                {itinerary.activitiesByDay &&
+                                itinerary.activitiesByDay.length > 0 ? (
+                                  <Button
+                                    variant='outline'
+                                    onClick={() =>
+                                      handleSeeSuggestions(itinerary)
+                                    }
+                                  >
+                                    See Suggestions
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant='outline'
+                                    onClick={() =>
+                                      handleGenerateSuggestions(itinerary)
+                                    }
+                                    disabled={
+                                      itineraryLoadingState[itinerary.id] ||
+                                      isGeneratingSuggestions
+                                    }
+                                  >
+                                    {itineraryLoadingState[itinerary.id]
+                                      ? 'Generating Suggestions...'
+                                      : 'Generate Suggestions'}
+                                  </Button>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className='text-gray-500 text-center'>
-                  No itineraries found.
-                </p>
-              )}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className='text-gray-500 text-center'>
+                        No itineraries found.
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

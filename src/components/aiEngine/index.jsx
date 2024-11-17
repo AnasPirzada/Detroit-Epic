@@ -1,12 +1,11 @@
-import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 function AiEngine() {
   const location = useLocation();
-  const { itinerary } = location.state || {}; // safely access the itinerary data
+  const { itineraryData } = location.state || {}; // safely access the itinerary data
 
   // Log the itinerary data
-  console.log("Received itinerary on AI route:", itinerary);
+  console.log('Received itinerary on AI route:', itineraryData);
 
   return (
     <div
@@ -123,24 +122,8 @@ function AiEngine() {
                 </p>
               </div>
             </div>
-            <div className='flex px-4 py-3'>
-              <button className='flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#e8eef3] text-[#0e161b] text-sm font-bold leading-normal tracking-[0.015em]'>
-                <span className='truncate'>Add Day</span>
-              </button>
-            </div>
-            <div className='flex px-4 py-3'>
-              <button className='flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#e8eef3] text-[#0e161b] text-sm font-bold leading-normal tracking-[0.015em]'>
-                <span className='truncate'>Delete Day</span>
-              </button>
-            </div>
-            <div className='flex px-4 py-3'>
-              <Link to='/result'>
-                <button className='flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#2c99e2] text-[#f8fafb] text-sm font-bold leading-normal tracking-[0.015em]'>
-                  <span className='truncate'>Save</span>
-                </button>
-              </Link>
-            </div>
           </div>
+
           <div className='layout-content-container flex flex-col max-w-[960px] flex-1'>
             <div className='flex flex-wrap justify-between gap-3 p-4'>
               <p className='text-[#0e161b] tracking-light text-[32px] font-bold leading-tight min-w-72'>

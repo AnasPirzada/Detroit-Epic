@@ -124,6 +124,7 @@ const Createreferrals = async () => {
     throw error;
   }
 };
+
 const Createreferralsstatus = async data => {
   try {
     const response = await apiClient.get('/referrals/status', data);
@@ -133,7 +134,33 @@ const Createreferralsstatus = async data => {
     throw error;
   }
 };
-
+const Getreferralscredits = async () => {
+  try {
+    const response = await apiClient.get('/referrals/credits');
+    return response.data;
+  } catch (error) {
+    console.error('Error Getting user referrals:', error);
+    throw error;
+  }
+};
+const FetchItinerarySuggestions = async id => {
+  try {
+    const response = await apiClient.get(`/itineraries/suggestions/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error Createing user suggestions:', error);
+    throw error;
+  }
+};
+const getSuggestions = async id => {
+  try {
+    const response = await apiClient.get(`/itineraries/getSuggestions/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error Getting user suggestions:', error);
+    throw error;
+  }
+};
 export default {
   LoginApi,
   Signup,
@@ -149,4 +176,7 @@ export default {
   Getitineraries,
   Createreferrals,
   Createreferralsstatus,
+  Getreferralscredits,
+  FetchItinerarySuggestions,
+  getSuggestions,
 };

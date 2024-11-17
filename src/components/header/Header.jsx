@@ -51,7 +51,7 @@ const Header = () => {
             </Link>
           ) : (
             <>
-              <Link to={'/logout'}>
+              <Link to={'/login'}>
                 <a
                   href='#logout'
                   className='hover:text-gray-300'
