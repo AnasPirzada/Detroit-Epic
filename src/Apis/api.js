@@ -96,6 +96,44 @@ const CreateReviews = async data => {
     throw error;
   }
 };
+const Createitineraries = async data => {
+  try {
+    const response = await apiClient.post('/itineraries/create', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error Adding itineraries:', error);
+    throw error;
+  }
+};
+
+const Getitineraries = async () => {
+  try {
+    const response = await apiClient.get(`/itineraries/all`);
+    return response.data;
+  } catch (error) {
+    console.error('Error Get itineraries:', error);
+    throw error;
+  }
+};
+const Createreferrals = async () => {
+  try {
+    const response = await apiClient.get('/referrals/generate');
+    return response.data;
+  } catch (error) {
+    console.error('Error Adding referrals:', error);
+    throw error;
+  }
+};
+const Createreferralsstatus = async data => {
+  try {
+    const response = await apiClient.get('/referrals/status', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error Adding referrals status:', error);
+    throw error;
+  }
+};
+
 export default {
   LoginApi,
   Signup,
@@ -107,4 +145,8 @@ export default {
   CreateExperiences,
   CreateReviews,
   Getreviews,
+  Createitineraries,
+  Getitineraries,
+  Createreferrals,
+  Createreferralsstatus,
 };

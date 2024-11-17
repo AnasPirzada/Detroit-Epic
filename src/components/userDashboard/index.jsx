@@ -14,7 +14,7 @@ import Loader from '../../components/loader.jsx';
 
 import { Label } from '@/components/ui/label';
 
-import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'react-toastify';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -35,7 +35,7 @@ import {
   Mail,
   Share2,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Dummy notifications
 const notifications = [
@@ -45,15 +45,30 @@ const notifications = [
 ];
 
 export default function UserDashboard() {
+  const [itineraryData, setGetitinerary] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [activeTab, setActiveTab] = useState('profile');
   const [selectedItinerary, setSelectedItinerary] = useState(null);
-  const [SuggestionsAi, setSelectedSuggestionsAi] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false); // State to toggle notifications
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State for edit profile modal
   const [budget, setBudget] = useState(0); // State for edit profile modal
   const [isLoading, setIsLoading] = useState(true);
   const [editData, setEditData] = useState({ fullName: '', email: '' });
+  // Form state for inputs
+  const [interest, setSelectedInterests] = useState([]);
+  const [activityPreferences, setActivityPreferences] = useState([]);
+  const [diningPreferences, setDiningPreferences] = useState([]);
+  const [referalcode, setreferalcode] = useState('');
+  const [referalcodestatus, setreferalcodestatus] = useState('');
+  const [formData, setFormData] = useState({
+    destination: '',
+    title: '',
+    startDate: '',
+    purpose: '',
+    duration: '',
+    budget: 0,
+  });
+  const navigate = useNavigate(); // Hook to navigate programmatically
 
   useEffect(() => {
     fetchProfile();
@@ -74,8 +89,8 @@ export default function UserDashboard() {
   const handleUpdateProfile = async () => {
     try {
       await userApi.UpdateProfile({
-        fullName: editData.fullName,
-        email: editData.email,
+        fullName: editData?.fullName,
+        email: editData?.email,
       });
       setIsEditModalOpen(false);
       fetchProfile(); // Re-fetch profile data to get updated details
@@ -84,31 +99,104 @@ export default function UserDashboard() {
     }
   };
 
-  const itineraries = [
-    {
-      id: 1,
-      name: 'Weekend in Detroit',
-      date: '2023-05-15',
-      description: 'Explore the best of Detroit in 48 hours',
-    },
-    {
-      id: 2,
-      name: 'Detroit Art Tour',
-      date: '2023-06-22',
-      description: "Discover Detroit's vibrant art scene",
-    },
-    {
-      id: 3,
-      name: 'Motor City Adventure',
-      date: '2023-07-10',
-      description: "Experience Detroit's automotive heritage",
-    },
-  ];
+  //Add New Itinerary code with check box logic
+  const handleCheckboxChange = (category, value) => {
+    if (category === 'interest') {
+      setSelectedInterests(prevState => {
+        if (prevState.includes(value)) {
+          return prevState.filter(item => item !== value);
+        } else {
+          return [...prevState, value];
+        }
+      });
+    } else if (category === 'activityPreferences') {
+      setActivityPreferences(prevState => {
+        if (prevState.includes(value)) {
+          return prevState.filter(item => item !== value);
+        } else {
+          return [...prevState, value];
+        }
+      });
+    } else if (category === 'diningPreferences') {
+      setDiningPreferences(prevState => {
+        if (prevState.includes(value)) {
+          return prevState.filter(item => item !== value);
+        } else {
+          return [...prevState, value];
+        }
+      });
+    }
+  };
+
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    const payload = {
+      ...formData,
+      interest, // Ensure this is an array
+      activityPreferences, // Ensure this is an array
+      diningPreferences, // Ensure this is an array
+    };
+    try {
+      console.log('apidata', payload);
+
+      const response = await userApi.Createitineraries(payload);
+
+      console.log('api response', response);
+      toast.success(response.message);
+      setSelectedItinerary(null); // Reset selected itinerary
+    } catch (error) {
+      toast.error('Failed to create itinerary. Please try again.');
+      console.error('Error creating itinerary:', error);
+    }
+  };
+
+  // itinerary logic end
+
+  // Get All itinerary
+  useEffect(() => {
+    fetchItinerary();
+  }, []);
+
+  const fetchItinerary = async () => {
+    setIsLoading(true);
+    try {
+      const response = await userApi.Getitineraries();
+      console.log(response);
+
+      setGetitinerary(response);
+    } catch (error) {
+      console.error('Error fetching Itinerary:', error);
+    }
+    setIsLoading(false);
+  };
+
+  // Create Referals
+
+  const handleCreatereferralsSubmit = async () => {
+    try {
+      const response = await userApi.Createreferrals();
+      const responsereferralsstatus = await userApi.Createreferralsstatus();
+      setreferalcode(response.referralCode);
+      console.log('second api response', responsereferralsstatus.creditsEarned);
+      const credtiearns = responsereferralsstatus.creditsEarned;
+      setreferalcodestatus(credtiearns);
+
+      toast.success(response.message);
+    } catch (error) {
+      toast.error('Failed to create itinerary. Please try again.');
+      console.error('Error creating itinerary:', error);
+    }
+  };
+  const friendsReferred = referalcodestatus / 10; // Calculate number of friends
 
   const referralProgress = {
-    creditsEarned: 75,
+    creditsEarned: referalcodestatus,
     creditsNeeded: 100,
-    friendsReferred: 3,
+    friendsReferred: friendsReferred,
   };
   if (isLoading) {
     return <Loader />;
@@ -121,9 +209,10 @@ export default function UserDashboard() {
         <TabsList className='grid w-full grid-cols-5'>
           <TabsTrigger value='profile'>Profile</TabsTrigger>
           <TabsTrigger value='itineraries'>Itineraries</TabsTrigger>
-          <TabsTrigger value='referrals'>Referrals</TabsTrigger>
+          <TabsTrigger value='referrals' onClick={handleCreatereferralsSubmit}>
+            Referrals
+          </TabsTrigger>
           <TabsTrigger value='add-itinerary'>Add Itinerary</TabsTrigger>{' '}
-          <TabsTrigger value='add-Ai'>AI</TabsTrigger> {/* New tab */}
         </TabsList>
         {/* Profile Tab */}
         <TabsContent value='profile'>
@@ -138,18 +227,22 @@ export default function UserDashboard() {
                   <Avatar className='h-20 w-20'>
                     <AvatarImage
                       src='/placeholder.svg'
-                      alt={profileData.fullName}
+                      alt={profileData?.fullName}
                     />
                     <AvatarFallback>
-                      {profileData.fullName ? profileData.fullName[0] : 'U'}
+                      {profileData?.fullName ? profileData?.fullName[0] : 'U'}
                     </AvatarFallback>
                   </Avatar>
                 </Avatar>
                 <div>
                   <h2 className='text-2xl font-semibold'>
-                    {profileData.fullName}
+                    Welcome, {profileData?.fullName || 'User'}!
                   </h2>
-                  <p className='text-sm text-gray-500'>{profileData.email}</p>
+                  <p className='text-sm text-gray-500'>
+                    {profileData
+                      ? `Email: ${profileData.email || 'N/A'}`
+                      : 'Loading your profile...'}
+                  </p>
                 </div>
                 {/* Notification Icon */}
                 <div className='relative'>
@@ -221,70 +314,126 @@ export default function UserDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className='space-y-4'>
-                {itineraries.map(itinerary => (
-                  <li
-                    key={itinerary.id}
-                    className='flex justify-between items-center'
-                  >
-                    <div>
-                      <h3 className='font-semibold'>{itinerary.name}</h3>
-                      <p className='text-sm text-gray-500'>{itinerary.date}</p>
-                    </div>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant='outline'
-                          onClick={() => setSelectedItinerary(itinerary)}
-                        >
-                          View
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className='sm:max-w-[425px]'>
-                        <DialogHeader>
-                          <DialogTitle>Share Your Itinerary</DialogTitle>
-                          <DialogDescription>
-                            {itinerary.description}
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className='grid gap-4 py-4'>
-                          <div className='grid grid-cols-4 items-center gap-4'>
-                            <img
-                              src='/placeholder.svg'
-                              alt={itinerary.name}
-                              className='col-span-4 h-40 w-full object-cover rounded-md'
-                            />
-                          </div>
-                          <div className='flex justify-between'>
-                            <Button variant='outline' size='icon'>
-                              <Share2 className='h-4 w-4' />
+              {itineraryData && itineraryData.length > 0 ? (
+                <ul className='space-y-4'>
+                  {itineraryData.map(itinerary => (
+                    <li
+                      key={itinerary.id}
+                      className='flex justify-between items-center'
+                    >
+                      <div>
+                        <h3 className='font-semibold'>{itinerary.title}</h3>
+                        <p className='text-sm text-gray-500'>
+                          {itinerary.startDate}
+                        </p>
+                      </div>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <div className='flex space-x-2'>
+                            <Button
+                              variant='outline'
+                              onClick={() => setSelectedItinerary(itinerary)}
+                            >
+                              View
                             </Button>
-                            <Button variant='outline' size='icon'>
-                              <Facebook className='h-4 w-4' />
-                            </Button>
-                            <Button variant='outline' size='icon'>
-                              <Instagram className='h-4 w-4' />
-                            </Button>
-                            <Button variant='outline' size='icon'>
-                              <Share2 className='h-4 w-4' />
+                            <Button
+                              variant='outline'
+                              onClick={() => {
+                                navigate('/ai', { state: { itinerary } });
+                              }}
+                            >
+                              See Suggestions
                             </Button>
                           </div>
-                          <div className='flex items-center space-x-2'>
-                            <Input
-                              id='itinerary-link'
-                              value={`https://visit-detroit.com/itinerary/${itinerary.id}`}
-                              readOnly
-                            />
-                            <Button size='sm' className='shrink-0'>
-                              Copy
-                            </Button>
+                        </DialogTrigger>
+
+                        <DialogContent className='sm:max-w-[425px]'>
+                          <DialogHeader>
+                            <DialogTitle>Share Your Itinerary</DialogTitle>
+                            <DialogDescription>
+                              {itinerary.destination ||
+                                'No destination specified'}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className='grid gap-4 py-4'>
+                            <div className='grid grid-cols-4 items-center gap-4'>
+                              <img
+                                src='/placeholder.svg'
+                                alt={itinerary.name || 'Itinerary Image'}
+                                className='col-span-4 h-40 w-full object-cover rounded-md'
+                              />
+                            </div>
+
+                            {/* Social Media Links */}
+                            <div className='flex space-x-2'>
+                              {itinerary.shareLinks?.facebook && (
+                                <a
+                                  href={itinerary.shareLinks.facebook}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='text-blue-600'
+                                >
+                                  <Button variant='outline' size='icon'>
+                                    <Facebook className='h-4 w-4' />
+                                  </Button>
+                                </a>
+                              )}
+                              {itinerary.shareLinks?.instagram && (
+                                <a
+                                  href={itinerary.shareLinks.instagram}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='text-pink-500'
+                                >
+                                  <Button variant='outline' size='icon'>
+                                    <Instagram className='h-4 w-4' />
+                                  </Button>
+                                </a>
+                              )}
+                              {itinerary.shareLinks?.tiktok && (
+                                <a
+                                  href={itinerary.shareLinks.tiktok}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='text-black'
+                                >
+                                  <Button variant='outline' size='icon'>
+                                    <Share2 className='h-4 w-4' />
+                                  </Button>
+                                </a>
+                              )}
+                            </div>
+
+                            {/* Copy Itinerary Link */}
+                            <div className='flex items-center space-x-2'>
+                              <Input
+                                id='itinerary-link'
+                                value={`https://visit-detroit.com/itinerary/${itinerary._id}`}
+                                readOnly
+                              />
+                              <Button
+                                size='sm'
+                                className='shrink-0'
+                                onClick={() =>
+                                  navigator.clipboard.writeText(
+                                    `https://visit-detroit.com/itinerary/${itinerary._id}`
+                                  )
+                                }
+                              >
+                                Copy
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </li>
-                ))}
-              </ul>
+                        </DialogContent>
+                      </Dialog>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className='text-gray-500 text-center'>
+                  No itineraries found.
+                </p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -306,10 +455,28 @@ export default function UserDashboard() {
                   </CardHeader>
                   <CardContent className='flex justify-between items-center'>
                     <code className='relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold'>
-                      DETROITYXDEHA
+                      {referalcode}
                     </code>
                     <Button size='icon' variant='ghost'>
-                      <ClipboardCopy className='h-4 w-4' />
+                      <ClipboardCopy
+                        className='h-4 w-4'
+                        onClick={() => {
+                          navigator.clipboard.writeText(referalcode).then(
+                            () => {
+                              console.log(
+                                'Referral code copied to clipboard:',
+                                referalcode
+                              );
+                            },
+                            err => {
+                              console.error(
+                                'Failed to copy referral code: ',
+                                err
+                              );
+                            }
+                          );
+                        }}
+                      />
                     </Button>
                   </CardContent>
                 </Card>
@@ -408,25 +575,28 @@ export default function UserDashboard() {
 
                   {/* Form Content */}
                   <div className='space-y-4'>
-                    {/* Purpose of Visit */}
+                    {/* Title */}
                     <div>
-                      <Label>Purpose of Visit</Label>
-                      <select className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'>
-                        <option value='' disabled selected>
-                          Select purpose
-                        </option>
-                        <option value='leisure'>Leisure</option>
-                        <option value='business'>Business</option>
-                        <option value='other'>Other</option>
-                      </select>
-                    </div>
-                    {/* Date */}
-                    <div>
-                      <Label>Name</Label>
+                      <Label>Title</Label>
                       <input
                         className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
                         type='text'
-                        placeholder='Add Name'
+                        placeholder='Add Title'
+                        name='title'
+                        value={formData.title}
+                        onChange={handleInputChange}
+                      />
+                    </div>{' '}
+                    {/* destination */}
+                    <div>
+                      <Label>destination</Label>
+                      <input
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        type='text'
+                        placeholder='Add destination'
+                        name='destination'
+                        value={formData.destination}
+                        onChange={handleInputChange}
                       />
                     </div>
                     {/* Date */}
@@ -436,12 +606,37 @@ export default function UserDashboard() {
                         className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
                         type='date'
                         placeholder=''
+                        name='startDate'
+                        value={formData.startDate}
+                        onChange={handleInputChange}
                       />
+                    </div>
+                    {/* Purpose of Visit */}
+                    <div>
+                      <Label>Purpose of Visit</Label>
+                      <select
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        value={formData.purpose}
+                        onChange={handleInputChange}
+                        name='purpose'
+                      >
+                        <option value='' disabled selected>
+                          Select purpose
+                        </option>
+                        <option value='leisure'>Leisure</option>
+                        <option value='business'>Business</option>
+                        <option value='other'>Other</option>
+                      </select>
                     </div>
                     {/* Duration */}
                     <div>
                       <Label>Duration</Label>
-                      <select className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'>
+                      <select
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        value={formData.duration}
+                        onChange={handleInputChange}
+                        name='duration'
+                      >
                         <option value='' disabled selected>
                           Select duration
                         </option>
@@ -450,50 +645,33 @@ export default function UserDashboard() {
                         <option value='month'>1 Month</option>
                       </select>
                     </div>
-
                     {/* Interests */}
                     <div>
                       <Label>Interests</Label>
                       <div className='grid grid-cols-2 gap-2'>
-                        <div>
-                          <Checkbox id='music' />
-                          <Label htmlFor='music' className='ml-2'>
-                            Music
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='sports' />
-                          <Label htmlFor='sports' className='ml-2'>
-                            Sports
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='food' />
-                          <Label htmlFor='food' className='ml-2'>
-                            Food
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='art' />
-                          <Label htmlFor='art' className='ml-2'>
-                            Art
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='nightlife' />
-                          <Label htmlFor='nightlife' className='ml-2'>
-                            Nightlife
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='history' />
-                          <Label htmlFor='history' className='ml-2'>
-                            History
-                          </Label>
-                        </div>
+                        {[
+                          { id: 'music', label: 'Music' },
+                          { id: 'sport', label: 'Sport' },
+                          { id: 'Food', label: 'Food' },
+                          { id: 'art', label: 'Art' },
+                          { id: 'nightlife', label: 'Nightlife' },
+                          { id: 'history', label: 'History' },
+                        ].map(item => (
+                          <div key={item.id}>
+                            <input
+                              type='checkbox'
+                              id={item.id}
+                              onChange={() =>
+                                handleCheckboxChange('interest', item.label)
+                              }
+                            />
+                            <label htmlFor={item.id} className='ml-2'>
+                              {item.label}
+                            </label>
+                          </div>
+                        ))}
                       </div>
                     </div>
-
                     {/* Budget Slider */}
                     <div>
                       <Label>Budget (USD)</Label>
@@ -503,214 +681,84 @@ export default function UserDashboard() {
                           min='0'
                           max='5000'
                           step='100'
-                          value={budget}
-                          onChange={e => setBudget(e.target.value)}
+                          name='budget'
+                          value={formData.budget}
+                          onChange={handleInputChange}
                           className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600'
                         />
-                        <span className='text-sm text-gray-700'>${budget}</span>
+                        <span className='text-sm text-gray-700'>
+                          ${formData.budget}
+                        </span>
                       </div>
                     </div>
-
                     {/* Dining Preferences */}
                     <div>
                       <Label>Dining Preferences</Label>
                       <div className='grid grid-cols-2 gap-2'>
-                        <div>
-                          <Checkbox id='fine-dining' />
-                          <Label htmlFor='fine-dining' className='ml-2'>
-                            Fine dining
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='casual' />
-                          <Label htmlFor='casual' className='ml-2'>
-                            Casual
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='vegetarian' />
-                          <Label htmlFor='vegetarian' className='ml-2'>
-                            Vegetarian
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='local-cuisine' />
-                          <Label htmlFor='local-cuisine' className='ml-2'>
-                            Local cuisine
-                          </Label>
-                        </div>
+                        {[
+                          { id: 'fine-dining', label: 'Fine Dining' },
+                          { id: 'casual', label: 'Casual' },
+                          { id: 'vegetarian', label: 'Vegetarian' },
+                          { id: 'local-cuisine', label: 'Local Cuisine' },
+                        ].map(item => (
+                          <div key={item.id}>
+                            <input
+                              type='checkbox'
+                              id={item.id}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  'diningPreferences',
+                                  item.label
+                                )
+                              }
+                            />
+                            <label htmlFor={item.id} className='ml-2'>
+                              {item.label}
+                            </label>
+                          </div>
+                        ))}
                       </div>
                     </div>
-
                     {/* Activity Preferences */}
                     <div>
                       <Label>Activity Preferences</Label>
                       <div className='grid grid-cols-2 gap-2'>
-                        <div>
-                          <Checkbox id='sports-events' />
-                          <Label htmlFor='sports-events' className='ml-2'>
-                            Sports events
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='live-concerts' />
-                          <Label htmlFor='live-concerts' className='ml-2'>
-                            Live concerts
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='sightseeing' />
-                          <Label htmlFor='sightseeing' className='ml-2'>
-                            Sightseeing
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='museums' />
-                          <Label htmlFor='museums' className='ml-2'>
-                            Museums
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='outdoor-activities' />
-                          <Label htmlFor='outdoor-activities' className='ml-2'>
-                            Outdoor activities
-                          </Label>
-                        </div>
+                        {[
+                          { id: 'sports-events', label: 'Sports Events' },
+                          { id: 'live-concerts', label: 'Live Concerts' },
+                          { id: 'sightseeing', label: 'Sightseeing' },
+                          { id: 'museums', label: 'Museums' },
+                          {
+                            id: 'outdoor-activities',
+                            label: 'Outdoor Activities',
+                          },
+                        ].map(item => (
+                          <div key={item.id}>
+                            <input
+                              type='checkbox'
+                              id={item.id}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  'activityPreferences',
+                                  item.label
+                                )
+                              }
+                            />
+                            <label htmlFor={item.id} className='ml-2'>
+                              {item.label}
+                            </label>
+                          </div>
+                        ))}
                       </div>
                     </div>
-
                     {/* Submit Button */}
-                    <Button onClick={() => setSelectedItinerary(null)}>
-                      Save Itinerary
-                    </Button>
+                    <Button onClick={handleSubmit}>Save Itinerary</Button>
                   </div>
                 </DialogContent>
               </Dialog>
             )}
           </div>
         </TabsContent>{' '}
-        <TabsContent value='add-Ai'>
-          <div className='border rounded-lg p-6'>
-            <div className='mb-6'>
-              <h2 className='text-xl font-semibold'>Itinerary Suggestion</h2>
-            </div>
-            <Button onClick={() => setSelectedSuggestionsAi({})}>
-              Suggestions
-            </Button>
-
-            {/* Modal to Add Itinerary */}
-            {SuggestionsAi && (
-              <Dialog
-                open={Boolean(SuggestionsAi)}
-                onOpenChange={setSelectedSuggestionsAi}
-              >
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Add Data To see Suggestions</DialogTitle>
-                    <DialogDescription>
-                      Fill in the details to See Suggestions.
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  {/* Form Content */}
-                  <div className='space-y-4'>
-                    {/* Day of Stay*/}
-                    <div>
-                      <Label>Day of Stay</Label>
-                      <select className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'>
-                        <option value='' disabled selected></option>{' '}
-                        <option value='1'>1</option>
-                        <option value='2'>2</option>
-                        <option value='3'>3</option>
-                        <option value='3'>4</option>
-                      </select>
-                    </div>
-                    {/* Purpose of visit */}
-                    <div>
-                      <Label>Purpose of visit</Label>
-                      <select className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'>
-                        <option value='' disabled selected></option>
-                        <option value='Romantic'>Romantic</option>
-                        <option value='Group'>Group</option>
-                        <option value='Solo'>Solo</option>
-                      </select>
-                    </div>
-                    {/* Budget */}
-                    <div>
-                      <Label>Budget</Label>
-                      <select className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'>
-                        <option value='' disabled selected></option>
-                        <option value='Under $200'>Under $200</option>
-                        <option value='$200-$500'>$200-$500</option>
-                        <option value='over $500'>over $500</option>
-                      </select>
-                    </div>{' '}
-                    {/* Date */}
-                    <div>
-                      <Label>Date</Label>
-                      <input
-                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
-                        type='date'
-                        placeholder=''
-                      />
-                    </div>
-                    {/* Interests */}
-                    <div>
-                      <Label>Interests</Label>
-                      <div className='grid grid-cols-2 gap-2'>
-                        <div>
-                          <Checkbox id='music' />
-                          <Label htmlFor='music' className='ml-2'>
-                            Music
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='sports' />
-                          <Label htmlFor='sports' className='ml-2'>
-                            Sports
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='food' />
-                          <Label htmlFor='food' className='ml-2'>
-                            Food
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='art' />
-                          <Label htmlFor='art' className='ml-2'>
-                            Art
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='nightlife' />
-                          <Label htmlFor='nightlife' className='ml-2'>
-                            Nightlife
-                          </Label>
-                        </div>
-                        <div>
-                          <Checkbox id='history' />
-                          <Label htmlFor='history' className='ml-2'>
-                            History
-                          </Label>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Submit Button */}
-                    <Link to='/ai'>
-                      <Button
-                        className='mt-4'
-                        onClick={() => setSelectedItinerary(null)}
-                      >
-                        Get Suggestions{' '}
-                      </Button>
-                    </Link>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
-        </TabsContent>
       </Tabs>
     </div>
   );

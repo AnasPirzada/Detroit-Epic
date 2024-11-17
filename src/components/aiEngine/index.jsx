@@ -1,6 +1,13 @@
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 function AiEngine() {
+  const location = useLocation();
+  const { itinerary } = location.state || {}; // safely access the itinerary data
+
+  // Log the itinerary data
+  console.log("Received itinerary on AI route:", itinerary);
+
   return (
     <div
       className='relative flex size-full min-h-screen flex-col bg-[#f8fafb] group/design-root overflow-x-hidden'
