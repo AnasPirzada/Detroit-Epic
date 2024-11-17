@@ -32,7 +32,7 @@ export default function Register() {
       const response = await userApi.Signup(formData);
       console.log('Signup successful:', response);
       toast.success('Signup successful!');
-      navigate('/login');
+      navigate('/Payment');
     } catch (error) {
       console.error('Signup error:', error);
       toast.error('Signup failed. Please try again.');

@@ -10,12 +10,12 @@ import {
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { userApi } from '../../Apis/index.jsx';
 import Loader from '../../components/loader.jsx';
-import PaymentForm from '../../components/PaymentForm.jsx';
-import { loadStripe } from '@stripe/stripe-js';
+import PaymentForm from '../payment/PaymentForm.jsx';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -44,7 +44,6 @@ const notifications = [
   'New destinations added to your preferences.',
   'You have 2 new referrals.',
 ];
-const stripePromise = loadStripe('pk_test_v6FgjzIxg2grmoIWKoOWCiAv'); // Replace with your actual Stripe public key
 
 export default function UserDashboard() {
   const [itineraryData, setGetitinerary] = useState([]);
@@ -289,7 +288,6 @@ export default function UserDashboard() {
             Referrals
           </TabsTrigger>
           <TabsTrigger value='add-itinerary'>Add Itinerary</TabsTrigger>{' '}
-          <TabsTrigger value='Payment'>Payment</TabsTrigger>{' '}
         </TabsList>
         {/* Profile Tab */}
         <TabsContent value='profile'>
@@ -726,7 +724,7 @@ export default function UserDashboard() {
                   </DialogHeader>
 
                   {/* Form Content */}
-                  <div className='space-y-4'>
+                  <div className='space-y-4 w-full'>
                     {/* Title */}
                     <div>
                       <Label>Title</Label>
@@ -911,17 +909,7 @@ export default function UserDashboard() {
             )}
           </div>
         </TabsContent>{' '}
-        <TabsContent value='Payment'>
-          <div className='border rounded-lg p-6'>
-            <div className='border rounded-lg p-6'>
-              <h2 className='text-xl font-semibold mb-4'>Payment</h2>
-              {/* Wrap your payment form with Elements provider */}
-              <Elements stripe={stripePromise}>
-                <PaymentForm />
-              </Elements>
-            </div>
-          </div>
-        </TabsContent>{' '}
+        
       </Tabs>
     </div>
   );

@@ -41,4 +41,7 @@
   color: #888;
 }
 
-
+.top-\[50\%\] {
+  overflow-y: auto !important;
+  height: 100vh !important;
+}
