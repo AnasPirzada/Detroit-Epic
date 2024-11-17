@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import PaymentForm from './PaymentForm.jsx';
 const stripePromise = loadStripe('pk_test_v6FgjzIxg2grmoIWKoOWCiAv'); // Replace with your actual Stripe public key
 
-export const index = () => {
+const index = () => {
   return (
     <div>
       <div className='border rounded-lg p-6'>
@@ -18,3 +18,5 @@ export const index = () => {
     </div>
   );
 };
+
+export default index;

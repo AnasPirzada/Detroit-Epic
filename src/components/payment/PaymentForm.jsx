@@ -2,7 +2,7 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const PaymentForm = () => {
+ const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const [paymentSuccess, setPaymentSuccess] = useState(false);
