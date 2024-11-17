@@ -7,14 +7,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Elements } from '@stripe/react-stripe-js';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { userApi } from '../../Apis/index.jsx';
 import Loader from '../../components/loader.jsx';
-
-import { Label } from '@/components/ui/label';
-
-import { toast } from 'react-toastify';
+import PaymentForm from '../../components/PaymentForm.jsx';
+import { loadStripe } from '@stripe/stripe-js';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -43,6 +44,7 @@ const notifications = [
   'New destinations added to your preferences.',
   'You have 2 new referrals.',
 ];
+const stripePromise = loadStripe('pk_test_v6FgjzIxg2grmoIWKoOWCiAv'); // Replace with your actual Stripe public key
 
 export default function UserDashboard() {
   const [itineraryData, setGetitinerary] = useState([]);
@@ -274,6 +276,8 @@ export default function UserDashboard() {
     return <Loader />;
   }
 
+  // stripe api
+
   return (
     <div className='container mx-auto p-4'>
       <h1 className='text-3xl font-bold mb-6'>User Dashboard</h1>
@@ -285,6 +289,7 @@ export default function UserDashboard() {
             Referrals
           </TabsTrigger>
           <TabsTrigger value='add-itinerary'>Add Itinerary</TabsTrigger>{' '}
+          <TabsTrigger value='Payment'>Payment</TabsTrigger>{' '}
         </TabsList>
         {/* Profile Tab */}
         <TabsContent value='profile'>
@@ -411,10 +416,21 @@ export default function UserDashboard() {
                             key={itinerary.id}
                             className='flex justify-between items-center'
                           >
-                            <h3 className='font-semibold'>{itinerary.title}</h3>
-                            <p className='text-sm text-gray-500'>
-                              {itinerary.startDate}
-                            </p>
+                            <h3 className='font-semibold flex flex-col justify-start items-start'>
+                              {itinerary.title}
+                              <p className='text-sm text-gray-500'>
+                                {itinerary.startDate &&
+                                !isNaN(new Date(itinerary.startDate).getTime())
+                                  ? new Date(
+                                      itinerary.startDate
+                                    ).toLocaleDateString('en-US', {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric',
+                                    })
+                                  : 'Invalid Date'}
+                              </p>
+                            </h3>
 
                             <div className='flex'>
                               <div className='me-4'>
@@ -893,6 +909,17 @@ export default function UserDashboard() {
                 </DialogContent>
               </Dialog>
             )}
+          </div>
+        </TabsContent>{' '}
+        <TabsContent value='Payment'>
+          <div className='border rounded-lg p-6'>
+            <div className='border rounded-lg p-6'>
+              <h2 className='text-xl font-semibold mb-4'>Payment</h2>
+              {/* Wrap your payment form with Elements provider */}
+              <Elements stripe={stripePromise}>
+                <PaymentForm />
+              </Elements>
+            </div>
           </div>
         </TabsContent>{' '}
       </Tabs>
