@@ -44,11 +44,18 @@ const Header = () => {
             </a>
           </Link>
           {!token ? (
-            <Link to={'/login'}>
-              <a href='#login' className='hover:text-gray-300'>
-                Login
-              </a>
-            </Link>
+            <>
+              <Link to={'/login'}>
+                <a href='#login' className='hover:text-gray-300'>
+                  Login
+                </a>
+              </Link>
+              <Link to={'/price'}>
+                <a href='#price' className='hover:text-gray-300'>
+                  Pricing
+                </a>
+              </Link>
+            </>
           ) : (
             <>
               <Link to={'/login'}>

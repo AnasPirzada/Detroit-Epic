@@ -9,13 +9,10 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { userApi } from '../../Apis/index.jsx';
 import Loader from '../../components/loader.jsx';
-import PaymentForm from '../payment/PaymentForm.jsx';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -69,6 +66,7 @@ export default function UserDashboard() {
     destination: '',
     title: '',
     startDate: '',
+    EndDate: '',
     purpose: '',
     duration: '',
     budget: 0,
@@ -281,7 +279,7 @@ export default function UserDashboard() {
     <div className='container mx-auto p-4'>
       <h1 className='text-3xl font-bold mb-6'>User Dashboard</h1>
       <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>
-        <TabsList className='grid w-full grid-cols-5'>
+        <TabsList className='grid w-full grid-cols-4'>
           <TabsTrigger value='profile'>Profile</TabsTrigger>
           <TabsTrigger value='itineraries'>Itineraries</TabsTrigger>
           <TabsTrigger value='referrals' onClick={handleCreatereferralsSubmit}>
@@ -714,8 +712,11 @@ export default function UserDashboard() {
               <Dialog
                 open={Boolean(selectedItinerary)}
                 onOpenChange={setSelectedItinerary}
+                className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 '
               >
-                <DialogContent>
+                <DialogContent 
+                className=' bg-white rounded-lg shadow-lg max-h-[100vh] w-full md:w-1/2 overflow-y-auto p-4'
+                >
                   <DialogHeader>
                     <DialogTitle>Create New Itinerary</DialogTitle>
                     <DialogDescription>
@@ -749,15 +750,27 @@ export default function UserDashboard() {
                         onChange={handleInputChange}
                       />
                     </div>
-                    {/* Date */}
+                    {/*Start Date */}
                     <div>
-                      <Label>Date</Label>
+                      <Label>Start Date</Label>
                       <input
                         className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
                         type='date'
                         placeholder=''
                         name='startDate'
                         value={formData.startDate}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    {/*End Date */}
+                    <div>
+                      <Label>End Date</Label>
+                      <input
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        type='date'
+                        placeholder=''
+                        name='EndDate'
+                        value={formData.EndDate}
                         onChange={handleInputChange}
                       />
                     </div>
@@ -909,7 +922,6 @@ export default function UserDashboard() {
             )}
           </div>
         </TabsContent>{' '}
-        
       </Tabs>
     </div>
   );

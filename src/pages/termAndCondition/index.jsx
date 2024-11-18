@@ -106,7 +106,7 @@ export default function TermsAndConditions() {
           Conditions, please contact us at:
         </p>
         <ul className="list-disc pl-5 mb-4">
-          <li>Email: [Your Email Address]</li>
+          <li>Email: support@detroitepicweekend.com</li>
           <li>Phone: [Your Phone Number]</li>
           <li>Address: [Your Business Address]</li>
         </ul>

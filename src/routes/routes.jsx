@@ -15,7 +15,10 @@ import TermsAndConditions from '@/pages/termAndCondition';
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Payment from '../components/payment/index.jsx';
+import About from '../pages/About/index.jsx';
+import Contact from '../pages/ContactUS/index.jsx';
 import Home from '../pages/home/Home';
+import Price from '../pages/Price/Price.jsx';
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -84,6 +87,18 @@ export const routes = createBrowserRouter([
       {
         path: '/terms-and-conditions',
         element: <TermsAndConditions />,
+      },
+      {
+        path: '/about',
+        element: <About />,
+      },
+      {
+        path: '/price',
+        element: <Price />,
+      },
+      {
+        path: '/contact',
+        element: <Contact />,
       },
     ],
   },

@@ -161,6 +161,15 @@ const getSuggestions = async id => {
     throw error;
   }
 };
+const Createrstripe = async data => {
+  try {
+    const response = await apiClient.post('stripe/charge', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error Adding Stripe :', error);
+    throw error;
+  }
+};
 export default {
   LoginApi,
   Signup,
@@ -179,4 +188,5 @@ export default {
   Getreferralscredits,
   FetchItinerarySuggestions,
   getSuggestions,
+  Createrstripe,
 };
