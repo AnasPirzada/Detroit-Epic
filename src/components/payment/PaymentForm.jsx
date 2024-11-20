@@ -5,10 +5,13 @@ import {
   useElements,
   useStripe,
 } from '@stripe/react-stripe-js';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+import countryList from 'react-select-country-list';
 import { ToastContainer, toast } from 'react-toastify';
 import { userApi } from '../../Apis/index.jsx';
+
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
@@ -63,16 +66,64 @@ const PaymentForm = () => {
       navigate('/error');
     }
   };
+  const [value, setValue] = useState('');
+  const options = useMemo(() => countryList().getData(), []);
 
+  const changeHandler = value => {
+    setValue(value);
+  };
   return (
     <>
       <ToastContainer />
       <div className='max-w-lg mx-auto mt-10 p-6 bg-white border border-gray-200 shadow-md rounded-lg'>
         <h2 className='text-xl font-semibold text-gray-800 mb-4 text-center'>
-          Card Payment
+          Pay with Card
         </h2>
 
         <form onSubmit={handleSubmit} className='space-y-6'>
+          {/* Email */}
+          <div>
+            <label
+              htmlFor='email'
+              className='block text-sm font-medium text-gray-700 mb-2'
+            >
+              Email
+            </label>
+            <input
+              type='email'
+              id='email'
+              className='w-full p-3 border border-gray-300 rounded-md'
+              placeholder='Enter your email'
+            />
+          </div>
+
+          {/* Cardholder Name */}
+          <div>
+            <label
+              htmlFor='cardholder-name'
+              className='block text-sm font-medium text-gray-700 mb-2'
+            >
+              Cardholder Name
+            </label>
+            <input
+              type='text'
+              id='cardholder-name'
+              className='w-full p-3 border border-gray-300 rounded-md'
+              placeholder='Full name on card'
+            />
+          </div>
+
+          {/* Country */}
+          <div>
+            <label
+              htmlFor='country'
+              className='block text-sm font-medium text-gray-700 mb-2'
+            >
+              Country
+            </label>
+            <Select options={options} value={value} onChange={changeHandler} />
+          </div>
+
           {/* Card Number */}
           <div>
             <label
@@ -85,6 +136,7 @@ const PaymentForm = () => {
               <CardNumberElement
                 id='card-number'
                 options={{
+                  showIcon: true,
                   style: {
                     base: {
                       color: '#32325d',

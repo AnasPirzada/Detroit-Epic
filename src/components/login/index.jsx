@@ -19,6 +19,9 @@ export default function Login() {
       localStorage.setItem('Token', Token);
       toast.success('login Successfully');
       navigate('/user-profile');
+      setTimeout(() => {
+        window.location.reload(); // Force reload after redirect
+      }, 0);
     } catch (error) {
       console.error('Login failed:', error);
       toast.error('Please check Your Credentials ');

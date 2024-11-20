@@ -170,6 +170,7 @@ const Createrstripe = async data => {
     throw error;
   }
 };
+
 export default {
   LoginApi,
   Signup,

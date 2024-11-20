@@ -5,19 +5,36 @@ const Header = () => {
   const [token, setToken] = useState(localStorage.getItem('Token'));
 
   useEffect(() => {
-    // Listen for changes to the localStorage item "Token"
-    const handleStorageChange = () => {
+    // Custom event to handle local storage updates in the same tab
+    const handleTokenChange = () => {
       setToken(localStorage.getItem('Token'));
     };
 
-    // Add event listener to handle token changes
+    // Listen for the custom event to update the token
+    window.addEventListener('tokenChanged', handleTokenChange);
+
+    // Listen for changes to the localStorage item "Token" from other tabs
+    const handleStorageChange = (event) => {
+      if (event.key === 'Token') {
+        setToken(event.newValue);
+      }
+    };
+
     window.addEventListener('storage', handleStorageChange);
 
-    // Clean up the event listener when the component unmounts
+    // Cleanup listeners
     return () => {
+      window.removeEventListener('tokenChanged', handleTokenChange);
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
+  // Function to update the token and emit the custom event
+  const updateToken = (value) => {
+    localStorage.setItem('Token', value);
+    const event = new Event('tokenChanged');
+    window.dispatchEvent(event);
+  };
 
   return (
     <header className='shadow-md relative bg-[#fff] text-gray-800'>
@@ -64,7 +81,7 @@ const Header = () => {
                   className='hover:text-gray-300'
                   onClick={() => {
                     localStorage.removeItem('Token'); // Remove token on logout
-                    setToken(null); // Update state immediately
+                    updateToken(null); // Trigger state update and event
                   }}
                 >
                   Logout

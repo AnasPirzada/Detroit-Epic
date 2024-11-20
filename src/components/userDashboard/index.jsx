@@ -72,7 +72,6 @@ export default function UserDashboard() {
     budget: 0,
   });
   const navigate = useNavigate(); // Hook to navigate programmatically
-
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -426,7 +425,9 @@ export default function UserDashboard() {
                                     })
                                   : 'Invalid Date'}
 
-                                <span className='ms-4'>{itinerary.destination}</span>
+                                <span className='ms-4'>
+                                  {itinerary.destination}
+                                </span>
                               </p>
                             </h3>
 
