@@ -1,9 +1,14 @@
-import { userApi } from '@/Apis'; // Ensure this points to your actual API file
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import {
+  CardCvcElement,
+  CardExpiryElement,
+  CardNumberElement,
+  useElements,
+  useStripe,
+} from '@stripe/react-stripe-js';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-
+import { userApi } from '../../Apis/index.jsx';
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
@@ -19,87 +24,145 @@ const PaymentForm = () => {
     }
 
     try {
-      // Static data for the API request
+      const cardElement = elements.getElement(CardNumberElement);
+
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+      });
+
+      if (error) {
+        console.error(error);
+        toast.error('Payment failed. Please try again.');
+        return;
+      }
+
+      console.log('PaymentMethod:', paymentMethod);
+
+      // Simulating a payment request
       const paymentData = {
-        amount: 1000, // Amount in cents
+        amount: 1000,
         currency: 'usd',
-        paymentMethodId: 'pm_card_visa', // Replace with a valid payment method ID
+        paymentMethodId: paymentMethod.id,
         callbackUrl: 'https://yourcallbackurl.com',
       };
 
-      // Call your API
+      // Replace with your actual API call
       const response = await userApi.Createrstripe(paymentData);
-      console.log('stripe response', response);
-
-      if (response?.paymentIntent.status) {
-        console.log('Payment successful:', response.paymentIntent.status);
-        toast.success(response.paymentIntent.status);
+      if (response?.paymentIntent?.status === 'succeeded') {
+        toast.success('Payment Successful!');
         setPaymentSuccess(true);
-
-        // Redirect to the login page after 2 seconds
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
+        setTimeout(() => navigate('/login'), 2000);
       } else {
-        console.log(response);
-        console.error(
-          'Payment failed:',
-          response?.data?.message || 'Unknown error'
-        );
+        toast.error('Payment failed.');
+        navigate('/error');
       }
     } catch (error) {
-      console.error('API error:', error);
+      console.error('Error:', error);
+      toast.error('An error occurred.');
+      navigate('/error');
     }
   };
 
   return (
     <>
       <ToastContainer />
-
-      <div className='max-w-md mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg'>
-        <h2 className='text-2xl font-semibold text-gray-800 text-center mb-6'>
-          Secure Payment
+      <div className='max-w-lg mx-auto mt-10 p-6 bg-white border border-gray-200 shadow-md rounded-lg'>
+        <h2 className='text-xl font-semibold text-gray-800 mb-4 text-center'>
+          Card Payment
         </h2>
-        <p className='text-gray-500 text-sm text-center mb-8'>
-          Complete your payment using a credit or debit card.
-        </p>
 
         <form onSubmit={handleSubmit} className='space-y-6'>
-          {/* Card Element */}
-          <div className='space-y-2'>
+          {/* Card Number */}
+          <div>
             <label
-              htmlFor='card-element'
-              className='block text-sm font-medium text-gray-700'
+              htmlFor='card-number'
+              className='block text-sm font-medium text-gray-700 mb-2'
             >
-              Credit or Debit Card
+              Card number
             </label>
-            <div className='p-4 border border-gray-300 rounded-lg shadow-sm focus-within:border-blue-500'>
-              <CardElement
-                id='card-element'
-                className='text-gray-700 focus:outline-none'
+            <div className='p-3 border border-gray-300 rounded-md flex items-center'>
+              <CardNumberElement
+                id='card-number'
+                options={{
+                  style: {
+                    base: {
+                      color: '#32325d',
+                      fontSize: '16px',
+                      '::placeholder': { color: '#aab7c4' },
+                    },
+                  },
+                }}
+                className='w-full focus:outline-none'
               />
             </div>
           </div>
 
+          {/* Expiration Date and CVC */}
+          <div className='grid grid-cols-2 gap-4'>
+            <div>
+              <label
+                htmlFor='card-expiry'
+                className='block text-sm font-medium text-gray-700 mb-2'
+              >
+                Expiration date
+              </label>
+              <div className='p-3 border border-gray-300 rounded-md'>
+                <CardExpiryElement
+                  id='card-expiry'
+                  options={{
+                    style: {
+                      base: {
+                        color: '#32325d',
+                        fontSize: '16px',
+                        '::placeholder': { color: '#aab7c4' },
+                      },
+                    },
+                  }}
+                  className='w-full focus:outline-none'
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor='card-cvc'
+                className='block text-sm font-medium text-gray-700 mb-2'
+              >
+                Security code
+              </label>
+              <div className='p-3 border border-gray-300 rounded-md'>
+                <CardCvcElement
+                  id='card-cvc'
+                  options={{
+                    style: {
+                      base: {
+                        color: '#32325d',
+                        fontSize: '16px',
+                        '::placeholder': { color: '#aab7c4' },
+                      },
+                    },
+                  }}
+                  className='w-full focus:outline-none'
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Button */}
           <button
             type='submit'
-            className='w-full py-3 bg-gray-900 text-white rounded-lg font-semibold shadow-md'
+            className='w-full py-3 bg-gray-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 focus:ring focus:ring-blue-300'
           >
             Pay $10.00
           </button>
 
-          {/* Success Message */}
           {paymentSuccess && (
-            <div className='mt-4 text-center text-green-600'>
-              <p>Payment Successful!</p>
+            <div className='mt-4 text-green-600 text-center'>
+              Payment Successful! Redirecting...
             </div>
           )}
         </form>
-
-        {/* Footer Info */}
-        <div className='mt-6 text-center text-sm text-gray-500'>
-          <p>Your payment information is encrypted and secure.</p>
-        </div>
       </div>
     </>
   );

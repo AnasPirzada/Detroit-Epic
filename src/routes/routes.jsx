@@ -14,6 +14,7 @@ import BlogDetailPage from '@/pages/singleBlog';
 import TermsAndConditions from '@/pages/termAndCondition';
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
+import ErrorPages from '../components/payment/ErrorPage.jsx';
 import Payment from '../components/payment/index.jsx';
 import About from '../pages/About/index.jsx';
 import Contact from '../pages/ContactUS/index.jsx';
@@ -71,6 +72,10 @@ export const routes = createBrowserRouter([
       {
         path: '/Payment',
         element: <Payment />,
+      },
+      {
+        path: '/error',
+        element: <ErrorPages />,
       },
       {
         path: '/privacy-policy',

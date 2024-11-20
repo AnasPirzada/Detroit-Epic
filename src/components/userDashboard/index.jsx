@@ -414,7 +414,7 @@ export default function UserDashboard() {
                           >
                             <h3 className='font-semibold flex flex-col justify-start items-start'>
                               {itinerary.title}
-                              <p className='text-sm text-gray-500'>
+                              <p className='text-sm flex text-gray-500'>
                                 {itinerary.startDate &&
                                 !isNaN(new Date(itinerary.startDate).getTime())
                                   ? new Date(
@@ -425,6 +425,8 @@ export default function UserDashboard() {
                                       day: 'numeric',
                                     })
                                   : 'Invalid Date'}
+
+                                <span className='ms-4'>{itinerary.destination}</span>
                               </p>
                             </h3>
 
@@ -714,9 +716,7 @@ export default function UserDashboard() {
                 onOpenChange={setSelectedItinerary}
                 className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 '
               >
-                <DialogContent 
-                className=' bg-white rounded-lg shadow-lg max-h-[100vh] w-full md:w-1/2 overflow-y-auto p-4'
-                >
+                <DialogContent className=' bg-white rounded-lg shadow-lg max-h-[100vh] w-full md:w-1/2 overflow-y-auto p-4'>
                   <DialogHeader>
                     <DialogTitle>Create New Itinerary</DialogTitle>
                     <DialogDescription>
@@ -740,11 +740,11 @@ export default function UserDashboard() {
                     </div>{' '}
                     {/* destination */}
                     <div>
-                      <Label>destination</Label>
+                      <Label>Destination</Label>
                       <input
                         className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
                         type='text'
-                        placeholder='Add destination'
+                        placeholder='Add Destination'
                         name='destination'
                         value={formData.destination}
                         onChange={handleInputChange}

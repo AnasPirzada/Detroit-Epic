@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { FaFacebookF, FaGoogle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { userApi } from '../../Apis/index.jsx';
@@ -148,22 +148,6 @@ export default function Register() {
             I agree to Detroit Epic Weekends Terms of Service and Privacy Policy
           </label>
         </div>
-
-        {/* Social Sign-In Section inside the form */}
-        <div className='mt-4 text-center'>
-          <p className='text-sm text-gray-600'>or sign in with</p>
-          <div className='mt-2 flex justify-center space-x-4'>
-            <Button className='flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-gray-600 border px-4 py-2 rounded'>
-              <FaFacebookF className='h-5 w-5 mr-2' />
-              Facebook
-            </Button>
-            <Button className='flex items-center justify-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded'>
-              <FaGoogle className='h-5 w-5 mr-2' />
-              Google
-            </Button>
-          </div>
-        </div>
-
         <Button
           type='submit'
           className='w-full bg-[#2C99E2] hover:bg-blue-600 text-white'
@@ -171,6 +155,24 @@ export default function Register() {
           Continue
         </Button>
       </form>
+
+      {/* Social Sign-In Section inside the form */}
+      <div className='mt-4 text-center'>
+        <p className='text-sm text-gray-600'>or sign in with</p>
+        <div className='mt-2 flex justify-center space-x-4'>
+          <Button className='flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-gray-600 border px-4 py-2 rounded'>
+            <FaFacebookF className='h-5 w-5 mr-2' />
+            Facebook
+          </Button>
+
+          <Link to='https://detroit-backend-self.vercel.app/auth/google'>
+            <Button className='flex items-center justify-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded'>
+              <FaGoogle className='h-5 w-5 mr-2' />
+              Google
+            </Button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
