@@ -78,11 +78,6 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <Link to='/terms' className='block px-4 py-2 hover:bg-gray-100'>
-                  Terms
-                </Link>
-              </li>
-              <li>
                 <Link
                   to='/privacy-policy'
                   className='block px-4 py-2 hover:bg-gray-100'
