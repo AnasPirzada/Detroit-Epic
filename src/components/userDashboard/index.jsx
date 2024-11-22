@@ -62,6 +62,8 @@ export default function UserDashboard() {
   const [diningPreferences, setDiningPreferences] = useState([]);
   const [referalcode, setreferalcode] = useState('');
   const [referalcodestatus, setreferalcodestatus] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [formData, setFormData] = useState({
     destination: '',
     title: '',
@@ -278,14 +280,55 @@ export default function UserDashboard() {
     <div className='container mx-auto p-4'>
       <h1 className='text-3xl font-bold mb-6'>User Dashboard</h1>
       <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>
-        <TabsList className='grid w-full grid-cols-4'>
+        {/* <TabsList className='grid w-full grid-cols-1 gap-2 md:grid-cols-4 md:gap-4'>
           <TabsTrigger value='profile'>Profile</TabsTrigger>
           <TabsTrigger value='itineraries'>Itineraries</TabsTrigger>
           <TabsTrigger value='referrals' onClick={handleCreatereferralsSubmit}>
             Referrals
           </TabsTrigger>
-          <TabsTrigger value='add-itinerary'>Add Itinerary</TabsTrigger>{' '}
-        </TabsList>
+          <TabsTrigger value='add-itinerary'>Add Itinerary</TabsTrigger>
+        </TabsList> */}
+        <div className='relative bg-white w-full'>
+          {/* Hamburger Icon for Mobile */}
+          <button
+            className='block md:hidden p-2 bg-gray-200 rounded focus:outline-none'
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth='2'
+              stroke='currentColor'
+              className='w-6 h-6'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M3.75 7.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5'
+              />
+            </svg>
+          </button>
+
+          {/* Tabs List */}
+          <div
+            className={`${
+              isMenuOpen ? 'block' : 'hidden'
+            } absolute left-0 top-full z-10 w-full bg-white shadow-lg md:static md:z-auto md:block md:shadow-none`}
+          >
+            <TabsList className='grid grid-cols-1 bg-white h-full gap-2 md:grid-cols-4 md:gap-4 p-4 md:p-0'>
+              <TabsTrigger value='profile'>Profile</TabsTrigger>
+              <TabsTrigger value='itineraries'>Itineraries</TabsTrigger>
+              <TabsTrigger
+                value='referrals'
+                onClick={handleCreatereferralsSubmit}
+              >
+                Referrals
+              </TabsTrigger>
+              <TabsTrigger value='add-itinerary'>Add Itinerary</TabsTrigger>
+            </TabsList>
+          </div>
+        </div>
         {/* Profile Tab */}
         <TabsContent value='profile'>
           <Card>
@@ -425,9 +468,13 @@ export default function UserDashboard() {
                                     })
                                   : 'Invalid Date'}
 
-                                <span className='ms-4'>
-                                  {itinerary.destination}
-                                </span>
+                                <p className='ms-4'>
+                                  Destination {' '}
+                                  <span className='text-gray-400'>
+                                    {' '}
+                                    {itinerary.destination}
+                                  </span>{' '}
+                                </p>
                               </p>
                             </h3>
 
