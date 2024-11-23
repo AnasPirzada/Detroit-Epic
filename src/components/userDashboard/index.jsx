@@ -63,12 +63,13 @@ export default function UserDashboard() {
   const [referalcode, setreferalcode] = useState('');
   const [referalcodestatus, setreferalcodestatus] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [successmessage, setsucessmessage] = useState('');
 
   const [formData, setFormData] = useState({
     destination: '',
     title: '',
     startDate: '',
-    EndDate: '',
+    endDate: '',
     purpose: '',
     duration: '',
     budget: 0,
@@ -150,6 +151,7 @@ export default function UserDashboard() {
       const response = await userApi.Createitineraries(payload);
 
       console.log('api response', response);
+      setsucessmessage(response.message);
       toast.success(response.message);
       setSelectedItinerary(null); // Reset selected itinerary
     } catch (error) {
@@ -752,6 +754,10 @@ export default function UserDashboard() {
           <div className='border rounded-lg p-6'>
             <div className='mb-6'>
               <h2 className='text-xl font-semibold'>Add New Itinerary</h2>
+              <p className='text-green-900 text-lg font-bold bg-green-200 p-2 mt-4'>
+
+              {successmessage}
+              </p>
             </div>
             <Button onClick={() => setSelectedItinerary({})}>
               Add Itinerary
@@ -817,8 +823,8 @@ export default function UserDashboard() {
                         className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
                         type='date'
                         placeholder=''
-                        name='EndDate'
-                        value={formData.EndDate}
+                        name='endDate'
+                        value={formData.endDate}
                         onChange={handleInputChange}
                       />
                     </div>
