@@ -33,7 +33,7 @@ import {
   Mail,
   Share2,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Dummy notifications
 const notifications = [
@@ -64,6 +64,7 @@ export default function UserDashboard() {
   const [referalcodestatus, setreferalcodestatus] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [successmessage, setsucessmessage] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     destination: '',
@@ -281,6 +282,81 @@ export default function UserDashboard() {
   return (
     <div className='container mx-auto p-4'>
       <h1 className='text-3xl font-bold mb-6'>User Dashboard</h1>
+
+      <>
+        {/* Hamburger Icon */}
+        <div className='absolute left-5 top-20'>
+          <button
+            // onMouseEnter={() => setIsDropdownOpen(true)}
+            // onMouseLeave={() => setIsDropdownOpen(false)}
+            onClick={() => setIsDropdownOpen(prev => !prev)}
+            className='text-gray-800 focus:outline-none'
+          >
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='h-6 w-6'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M4 6h16M4 12h16M4 18h16'
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Dropdown Menu */}
+        {isDropdownOpen && (
+          <div className='absolute top-32 left-0 w-full bg-white shadow-md rounded-lg mt-2 md:w-auto'>
+            <ul className='flex flex-col'>
+              <li>
+                <Link to='/about' className='block px-4 py-2 hover:bg-gray-100'>
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to='/privacy-policy'
+                  className='block px-4 py-2 hover:bg-gray-100'
+                >
+                  Privacy
+                </Link>
+              </li>{' '}
+              <li>
+                <Link
+                  to='/terms-and-conditions'
+                  className='block px-4 py-2 hover:bg-gray-100'
+                >
+                  Terms
+                </Link>
+              </li>{' '}
+              <li>
+                <Link to='/guide' className='block px-4 py-2 hover:bg-gray-100'>
+                  Guide
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to='/contact'
+                  className='block px-4 py-2 hover:bg-gray-100'
+                >
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link to='/work' className='block px-4 py-2 hover:bg-gray-100'>
+                  How it Works
+                </Link>
+              </li>
+            </ul>
+          </div>
+        )}
+      </>
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>
         {/* <TabsList className='grid w-full grid-cols-1 gap-2 md:grid-cols-4 md:gap-4'>
           <TabsTrigger value='profile'>Profile</TabsTrigger>
@@ -754,10 +830,11 @@ export default function UserDashboard() {
           <div className='border rounded-lg p-6'>
             <div className='mb-6'>
               <h2 className='text-xl font-semibold'>Add New Itinerary</h2>
-              <p className='text-green-900 text-lg font-bold bg-green-200 p-2 mt-4'>
-
-              {successmessage}
-              </p>
+              {successmessage && (
+                <p className='text-green-900 text-lg font-bold bg-green-200 p-2 mt-4'>
+                  {successmessage}
+                </p>
+              )}
             </div>
             <Button onClick={() => setSelectedItinerary({})}>
               Add Itinerary
