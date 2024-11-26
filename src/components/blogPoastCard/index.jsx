@@ -14,7 +14,9 @@ export default function BlogPostCard({ post }) {
         <p className='text-sm text-gray-500'>{post.category}</p>
         <p className='text-sm mt-2'>{post.description}</p>
         <div className='flex justify-between items-center mt-4'>
-          <span className='text-xs text-gray-400'>{post.date}</span>
+          <span className='text-xs text-gray-400'>
+            {new Date(post.date).toLocaleDateString()}
+          </span>
           <Link
             to={`/blogs/${post._id}`}
             className='no-underline text-blue-500 border px-[10px] py-[5px] text-sm '

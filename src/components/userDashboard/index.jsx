@@ -314,6 +314,14 @@ export default function UserDashboard() {
           <div className='absolute top-32 left-0 w-full bg-white shadow-md rounded-lg mt-2 md:w-auto'>
             <ul className='flex flex-col'>
               <li>
+                <Link
+                  to='/user-profile'
+                  className='block px-4 py-2 hover:bg-gray-100'
+                >
+                  User Profile{' '}
+                </Link>
+              </li>
+              <li>
                 <Link to='/about' className='block px-4 py-2 hover:bg-gray-100'>
                   About Us
                 </Link>
