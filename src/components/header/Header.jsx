@@ -53,6 +53,11 @@ const Header = () => {
             <a href='#experiences' className='hover:text-gray-300'>
               Experiences
             </a>
+          </Link>{' '}
+          <Link to={'/Partner'}>
+            <a href='#Partner' className='hover:text-gray-300'>
+              Start Partnering
+            </a>
           </Link>
           <Link to={'/blogs'}>
             <a href='#experiences' className='hover:text-gray-300'>

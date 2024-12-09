@@ -19,6 +19,7 @@ import Payment from '../components/payment/index.jsx';
 import About from '../pages/About/index.jsx';
 import Contact from '../pages/ContactUS/index.jsx';
 import Home from '../pages/home/Home';
+import Partner from '../pages/Partner/index.jsx';
 import Price from '../pages/Price/Price.jsx';
 export const routes = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ export const routes = createBrowserRouter([
       {
         path: '/ai',
         element: <AiEngine />,
+      },
+      {
+        path: '/Partner',
+        element: <Partner />,
       },
       {
         path: '/register',
