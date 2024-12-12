@@ -18,6 +18,7 @@ const Home = () => {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
   return (
     <>
       <div
@@ -69,6 +70,53 @@ const Home = () => {
             Don’t risk another disappointing weekend—let DEW craft an
             unforgettable experience for you.
           </p>
+
+          {/* Detroit Features Section */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mt-10'>
+            {/* Feature 1: The Guardian Building */}
+            <div className='bg-white p-4 rounded-lg shadow-md'>
+              <img
+                src='https://tourdetroit.com/wp-content/uploads/2024/03/GuardianExtCityTourDetroit.jpg'
+                alt='The Guardian Building'
+                className='w-full h-60 object-cover rounded-t-lg'
+              />
+              <h3 className='text-xl font-bold mt-2'>The Guardian Building</h3>
+              <p className='text-gray-700'>
+                An Art Deco masterpiece known as the "Cathedral of Finance,"
+                featuring stunning architecture and intricate tile work.
+              </p>
+            </div>
+
+            {/* Feature 2: Detroit Institute of Arts */}
+            <div className='bg-white p-4 rounded-lg shadow-md'>
+              <img
+                src='https://mymichigantravel.com/wp-content/uploads/DIA-in-Detroit-980x551.jpg'
+                alt='Detroit Institute of Arts'
+                className='w-full h-60 object-cover rounded-t-lg'
+              />
+              <h3 className='text-xl font-bold mt-2'>
+                Detroit Institute of Arts
+              </h3>
+              <p className='text-gray-700'>
+                Home to over 65,000 artworks, this museum is a cultural gem
+                showcasing pieces from renowned artists.
+              </p>
+            </div>
+
+            {/* Feature 3: Motown Museum */}
+            <div className='bg-white p-4 rounded-lg shadow-md'>
+              <img
+                src='https://www.motownmuseum.org/wp-content/uploads/2021/01/mm_Hitsville_Campus_Photo-2-1024x819.jpg'
+                alt='Motown Museum'
+                className='w-full h-60 object-cover rounded-t-lg'
+              />
+              <h3 className='text-xl font-bold mt-2'>Motown Museum</h3>
+              <p className='text-gray-700'>
+                Explore the birthplace of Motown Records and learn about the
+                legendary artists who shaped music history.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Section 2: We Know Detroit */}
