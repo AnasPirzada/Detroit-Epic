@@ -18,6 +18,7 @@ import ErrorPages from '../components/payment/ErrorPage.jsx';
 import Payment from '../components/payment/index.jsx';
 import About from '../pages/About/index.jsx';
 import Contact from '../pages/ContactUS/index.jsx';
+import Features from '../pages/Features/index.jsx';
 import Home from '../pages/home/Home';
 import Partner from '../pages/Partner/index.jsx';
 import Price from '../pages/Price/Price.jsx';
@@ -41,6 +42,10 @@ export const routes = createBrowserRouter([
       {
         path: '/experience/:id',
         element: <ExperienceDetail />,
+      },
+      {
+        path: '/Features',
+        element: <Features />,
       },
       {
         path: '/user-profile',
