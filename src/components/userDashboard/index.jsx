@@ -73,6 +73,8 @@ export default function UserDashboard() {
     endDate: '',
     purpose: '',
     duration: '',
+    cuisineType: '',
+    transportation: '',
     budget: 0,
   });
   const navigate = useNavigate(); // Hook to navigate programmatically
@@ -993,11 +995,64 @@ export default function UserDashboard() {
                         </span>
                       </div>
                     </div>
+                    {/* Transportation Preferences */}
+                    <div>
+                      <Label>Transportation Options</Label>
+                      <select
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        value={formData.transportation}
+                        onChange={handleInputChange}
+                        name='transportation'
+                      >
+                        <option value='' disabled selected>
+                          Select Transportation
+                        </option>
+                        <option value='public'>Public Transportation</option>
+                        <option value='ride-sharing'>
+                          Ride-sharing (Uber/Lyft)
+                        </option>
+                        <option value='private'>Private Transportation</option>
+                        <option value='car-rental'>Car Rentals</option>
+                        <option value='biking'>Biking</option>
+                        <option value='walking'>Walking Routes</option>
+                      </select>
+                    </div>
+                    {/* Cuisine Preferences */}
+                    <div>
+                      <Label>Cuisine Preferences</Label>
+                      <select
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        value={formData.cuisineType}
+                        onChange={handleInputChange}
+                        name='cuisineType'
+                      >
+                        <option value='' disabled selected>
+                          Select Cuisine
+                        </option>
+                        <option value='detroit-classics'>
+                          Detroit Classics
+                        </option>
+                        <option value='mexican'>Mexican</option>
+                        <option value='italian'>Italian</option>
+                        <option value='asian'>Asian</option>
+                        <option value='fusion'>Fusion</option>
+                        <option value='vegan'>Vegan/Vegetarian</option>
+                        <option value='soul-food'>Soul Food</option>
+                        <option value='seafood'>Seafood</option>
+                        <option value='desserts'>Desserts/Cafes</option>
+                      </select>
+                    </div>
                     {/* Dining Preferences */}
                     <div>
                       <Label>Dining Preferences</Label>
                       <div className='grid grid-cols-2 gap-2'>
                         {[
+                          { id: 'trendy-hotspots', label: 'Trendy Hotspots' },
+                          { id: 'family-friendly', label: 'Family-Friendly' },
+                          { id: 'street-food', label: 'Street Food' },
+                          { id: 'casual-dining', label: 'Casual Dining' },
+                          { id: 'budget-friendly', label: 'Budget-friendly' },
+                          { id: 'local-favorites', label: 'Local Favorites' },
                           { id: 'fine-dining', label: 'Fine Dining' },
                           { id: 'casual', label: 'Casual' },
                           { id: 'vegetarian', label: 'Vegetarian' },
@@ -1027,12 +1082,33 @@ export default function UserDashboard() {
                       <div className='grid grid-cols-2 gap-2'>
                         {[
                           { id: 'sports-events', label: 'Sports Events' },
+                          {
+                            id: 'family-friendly',
+                            label: 'Family-Friendly Experiences',
+                          },
                           { id: 'live-concerts', label: 'Live Concerts' },
+                          { id: 'relaxation', label: 'Relaxation and Spa' },
+                          { id: 'food-tours', label: 'Food Tours' },
+                          { id: 'shopping', label: 'Shopping' },
+                          {
+                            id: 'live-entertainment',
+                            label: 'Live Entertainment',
+                          },
                           { id: 'sightseeing', label: 'Sightseeing' },
+                          { id: 'sporting-events', label: 'Sporting Events' },
+                          { id: 'concerts', label: 'Concerts' },
                           { id: 'museums', label: 'Museums' },
                           {
-                            id: 'outdoor-activities',
-                            label: 'Outdoor Activities',
+                            id: 'outdoor-adventures',
+                            label: 'Outdoor Adventures',
+                          },
+                          {
+                            id: 'Nightlife',
+                            label: 'Nightlife',
+                          },
+                          {
+                            id: 'Cultural-Tours',
+                            label: 'Cultural Tours',
                           },
                         ].map(item => (
                           <div key={item.id}>
