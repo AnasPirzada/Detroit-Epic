@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 function AiEngine() {
   const location = useLocation();
   const { suggestions } = location.state || {}; // Safely access the itinerary data
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState('Morning'); // Track the selected time slot
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState('Morning Activity'); // Track the selected time slot
 
   // Group activities by timeSlot
   const groupedActivities = suggestions?.reduce((acc, item) => {
@@ -124,53 +124,55 @@ function AiEngine() {
             {/* Display selected timeSlot content */}
             <div className='p-4'>
               {selectedTimeSlot ? (
-                groupedActivities[selectedTimeSlot]?.map((activity, index) => (
-                  <div key={index} className='mb-4 shadow-lg rounded-lg'>
-                    <div className='flex items-center gap-4 py-3 bg-[#f8fafb] px-4 min-h-14'>
-                      <div
-                        className='text-[#0e161b] flex items-center justify-center rounded-lg bg-[#e8eef3] shrink-0 size-10'
-                        data-icon='Clock'
-                        data-size='24px'
-                        data-weight='regular'
-                      >
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          width='24px'
-                          height='24px'
-                          fill='currentColor'
-                          viewBox='0 0 256 256'
+                groupedActivities[selectedTimeSlot]?.map(
+                  (activities, index) => (
+                    <div key={index} className='mb-4 shadow-lg rounded-lg'>
+                      <div className='flex items-center gap-4 py-3 bg-[#f8fafb] px-4 min-h-14'>
+                        <div
+                          className='text-[#0e161b] flex items-center justify-center rounded-lg bg-[#e8eef3] shrink-0 size-10'
+                          data-icon='Clock'
+                          data-size='24px'
+                          data-weight='regular'
                         >
-                          <path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z'></path>
-                        </svg>
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='24px'
+                            height='24px'
+                            fill='currentColor'
+                            viewBox='0 0 256 256'
+                          >
+                            <path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z'></path>
+                          </svg>
+                        </div>
+                        <p className='text-[#0e161b] text-base font-normal leading-normal flex-1 truncate'>
+                          {activities.timeSlot} {/* Display the Time Slot */}
+                        </p>
                       </div>
-                      <p className='text-[#0e161b] text-base font-normal leading-normal flex-1 truncate'>
-                        {activity.timeSlot} {/* Display the Time Slot */}
-                      </p>
-                    </div>
-                    <span className='bg-[#507a95] ms-5  py-2 w-[15%] px-4 rounded-full text-white'>
-                      {activity.budget}
-                    </span>
+                      <span className='bg-[#507a95] ms-5  py-2 w-[15%] px-4 rounded-full text-white'>
+                        {activities.budget}
+                      </span>
 
-                    <div className='p-4'>
-                      <div className='flex items-stretch justify-between gap-4 rounded-xl'>
-                        <div className='flex flex-[2_2_0px] flex-col gap-4'>
-                          <div className='flex flex-col gap-1'>
-                            <p className='text-[#0e161b] text-base font-bold leading-tight'>
-                              {activity.title}{' '}
-                            </p>
+                      <div className='p-4'>
+                        <div className='flex items-stretch justify-between gap-4 rounded-xl'>
+                          <div className='flex flex-[2_2_0px] flex-col gap-4'>
+                            <div className='flex flex-col gap-1'>
+                              <p className='text-[#0e161b] text-base font-bold leading-tight'>
+                                {activities.title}{' '}
+                              </p>
 
-                            <p className='text-[#507a95] text-sm font-normal leading-normal'>
-                              {activity.description}
-                            </p>
-                          </div>
-                          {/* <button className='flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 flex-row-reverse bg-[#e8eef3] text-[#0e161b] text-sm font-medium leading-normal w-fit'>
+                              <p className='text-[#507a95] text-sm font-normal leading-normal'>
+                                {activities.description}
+                              </p>
+                            </div>
+                            {/* <button className='flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 flex-row-reverse bg-[#e8eef3] text-[#0e161b] text-sm font-medium leading-normal w-fit'>
                             <span className='truncate'>View Details</span>
                           </button> */}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  )
+                )
               ) : (
                 <p className='text-gray-500'>
                   Select a time slot to view activities.
