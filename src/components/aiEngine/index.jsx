@@ -5,7 +5,6 @@ function AiEngine() {
   const location = useLocation();
   const { suggestions } = location.state || {}; // Safely access the itinerary data
 
-  // Group activities by dayTitle and timeSlot
   const [groupedActivities, setGroupedActivities] = useState({});
 
   useEffect(() => {
@@ -22,30 +21,22 @@ function AiEngine() {
         }
         return acc;
       }, {});
-
       setGroupedActivities(activitiesByDay);
     }
   }, [suggestions]);
 
   const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
   useEffect(() => {
     if (Object.keys(groupedActivities).length > 0) {
-      // Set the first day and its first timeSlot as active initially
+      // Automatically select the first day initially
       const firstDay = Object.keys(groupedActivities)[0];
-      const firstTimeSlot = Object.keys(groupedActivities[firstDay])[0];
       setSelectedDay(firstDay);
-      setSelectedTimeSlot(firstTimeSlot);
     }
   }, [groupedActivities]);
 
   const handleClickDay = dayTitle => {
     setSelectedDay(prevDay => (prevDay === dayTitle ? null : dayTitle)); // Toggle day selection
-  };
-
-  const handleClickTimeSlot = timeSlot => {
-    setSelectedTimeSlot(timeSlot);
   };
 
   return (
@@ -67,7 +58,9 @@ function AiEngine() {
                   <div
                     key={index}
                     onClick={() => handleClickDay(dayTitle)} // Toggle day selection
-                    className='flex items-center gap-4 bg-[#f8fafb] px-4 min-h-[72px] py-2 cursor-pointer'
+                    className={`flex items-center gap-4 bg-[#f8fafb] px-4 min-h-[72px] py-2 cursor-pointer ${
+                      selectedDay === dayTitle ? 'bg-[#e0f4ff]' : ''
+                    }`}
                   >
                     <div className='text-[#0e161b] flex items-center justify-center rounded-lg bg-[#e8eef3] shrink-0 size-12'>
                       <svg
@@ -95,83 +88,52 @@ function AiEngine() {
             )}
           </div>
 
+          {/* Main content */}
           <div className='layout-content-container flex flex-col max-w-[960px] flex-1'>
-            {/* Time Slot Navigation */}
-            <div className='pb-3'>
-              <div className='flex border-b border-[#d1dde6] px-4 gap-8'>
-                {selectedDay &&
-                  Object.keys(groupedActivities[selectedDay] || {}).map(
-                    timeSlot => (
-                      <a
-                        key={timeSlot}
-                        onClick={() => handleClickTimeSlot(timeSlot)}
-                        className={`flex flex-col items-center justify-center border-b-[3px] ${
-                          selectedTimeSlot === timeSlot
-                            ? 'border-b-[#2c99e2] text-[#0e161b]'
-                            : 'border-b-transparent text-[#507a95]'
-                        } pb-[13px] pt-4 cursor-pointer`}
-                      >
-                        <p className='text-sm font-bold leading-normal'>
-                          {timeSlot}
-                        </p>
-                      </a>
-                    )
-                  )}
-              </div>
-            </div>
-
-            {/* Display selected day and timeSlot activities */}
-            {selectedDay && selectedTimeSlot && (
+            {selectedDay && (
               <div className='p-4'>
-                {groupedActivities[selectedDay][selectedTimeSlot]?.map(
-                  (activity, index) => (
-                    <div key={index} className='mb-4 shadow-lg rounded-lg'>
-                      <div className='flex items-center gap-4 py-3 bg-[#f8fafb] px-4 min-h-14'>
-                        <div
-                          className='text-[#0e161b] flex items-center justify-center rounded-lg bg-[#e8eef3] shrink-0 size-10'
-                          data-icon='Clock'
-                          data-size='24px'
-                          data-weight='regular'
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            width='24px'
-                            height='24px'
-                            fill='currentColor'
-                            viewBox='0 0 256 256'
-                          >
-                            <path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z'></path>
-                          </svg>
-                        </div>
-                        <p className='text-[#0e161b] text-base font-normal leading-normal flex-1 truncate'>
-                          {activity.timeSlot} {/* Display the Time Slot */}
-                        </p>
-                      </div>
-                      <span className='bg-[#507a95] ms-5  py-2 w-[15%] px-4 rounded-full text-white'>
-                        {activity.budget}
-                      </span>
-
-                      <div className='p-4'>
-                        <div className='flex items-stretch justify-between gap-4 rounded-xl'>
-                          <div className='flex flex-[2_2_0px] flex-col gap-4'>
-                            <div className='flex flex-col gap-1'>
-                              <p className='text-[#0e161b] text-base font-bold leading-tight'>
-                                {activity.title}{' '}
-                              </p>
-
-                              <p className='text-[#507a95] text-sm font-normal leading-normal'>
-                                {activity.description}
-                              </p>
+                {Object.entries(groupedActivities[selectedDay] || {}).map(
+                  ([timeSlot, activities]) => (
+                    <div key={timeSlot} className='mb-6'>
+                      <h4 className='text-[#0e161b] text-lg font-bold mb-4'>
+                        {timeSlot}
+                      </h4>
+                      {activities.map((activity, index) => (
+                        <div key={index} className='mb-4 shadow-lg rounded-lg'>
+                          <div className='flex items-center gap-4 py-3 bg-[#f8fafb] px-4 min-h-14'>
+                            <div
+                              className='text-[#0e161b] flex items-center justify-center rounded-lg bg-[#e8eef3] shrink-0 size-10'
+                              data-icon='Clock'
+                              data-size='24px'
+                              data-weight='regular'
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                width='24px'
+                                height='24px'
+                                fill='currentColor'
+                                viewBox='0 0 256 256'
+                              >
+                                <path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z'></path>
+                              </svg>
                             </div>
-                            <div className='py-2'>
-                              {' '}
-                              <p className='text-[#0e161b] text-base font-bold leading-tight'>
-                                {activity.transportationGuide}
-                              </p>
-                            </div>
+                            <p className='text-[#0e161b] text-base font-normal leading-normal flex-1 truncate'>
+                              {activity.title}
+                            </p>
+                          </div>
+                          <span className='bg-[#507a95] ms-5 py-1 w-[15%] px-4 rounded-lg text-white'>
+                            {activity.budget}
+                          </span>
+                          <div className='p-4'>
+                            <p className='text-[#507a95] text-sm font-normal leading-normal'>
+                              {activity.description}
+                            </p>
+                            <p className='text-[#0e161b] text-base font-bold leading-tight'>
+                              {activity.transportationGuide}
+                            </p>
                           </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
                   )
                 )}
