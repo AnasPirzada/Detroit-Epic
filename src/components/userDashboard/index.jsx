@@ -67,7 +67,7 @@ export default function UserDashboard() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [formData, setFormData] = useState({
-    destination: '',
+    destination: 'Detroit',
     title: '',
     startDate: '',
     endDate: '',
@@ -885,8 +885,9 @@ export default function UserDashboard() {
                       <input
                         className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
                         type='text'
-                        placeholder='Add Destination'
+                        placeholder='Add  Destination'
                         name='destination'
+                        readOnly
                         value={formData.destination}
                         onChange={handleInputChange}
                       />
