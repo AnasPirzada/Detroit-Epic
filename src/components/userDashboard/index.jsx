@@ -65,6 +65,7 @@ export default function UserDashboard() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [successmessage, setsucessmessage] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false); // State to track saving status
 
   const [formData, setFormData] = useState({
     destination: 'Detroit',
@@ -148,6 +149,8 @@ export default function UserDashboard() {
       activityPreferences, // Ensure this is an array
       diningPreferences, // Ensure this is an array
     };
+    setIsSaving(true); // Start loading spinner
+
     try {
       console.log('apidata', payload);
 
@@ -157,9 +160,12 @@ export default function UserDashboard() {
       setsucessmessage(response.message);
       toast.success(response.message);
       setSelectedItinerary(null); // Reset selected itinerary
+      fetchItinerary();
     } catch (error) {
       toast.error('Failed to create itinerary. Please try again.');
       console.error('Error creating itinerary:', error);
+    } finally {
+      setIsSaving(false); // Stop loading spinner
     }
   };
 
@@ -930,6 +936,7 @@ export default function UserDashboard() {
                         </option>
                         <option value='leisure'>Leisure</option>
                         <option value='business'>Business</option>
+                        <option value='romantic'> Romantic </option>
                         <option value='other'>Other</option>
                       </select>
                     </div>
@@ -1131,7 +1138,17 @@ export default function UserDashboard() {
                       </div>
                     </div>
                     {/* Submit Button */}
-                    <Button onClick={handleSubmit}>Save Itinerary</Button>
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={isSaving} // Disable the button while saving
+                      className='relative flex items-center justify-center'
+                    >
+                      {isSaving ? (
+                        <span className='inline-block w-5 h-5 border-2 border-t-2 border-gray-200 border-t-blue-500 rounded-full animate-spin'></span>
+                      ) : (
+                        'Save Itinerary'
+                      )}
+                    </Button>
                   </div>
                 </DialogContent>
               </Dialog>
