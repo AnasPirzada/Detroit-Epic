@@ -1028,27 +1028,35 @@ export default function UserDashboard() {
                     {/* Cuisine Preferences */}
                     <div>
                       <Label>Cuisine Preferences</Label>
-                      <select
-                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
-                        value={formData.cuisineType}
-                        onChange={handleInputChange}
-                        name='cuisineType'
-                      >
-                        <option value='' disabled selected>
-                          Select Cuisine
-                        </option>
-                        <option value='detroit-classics'>
-                          Detroit Classics
-                        </option>
-                        <option value='mexican'>Mexican</option>
-                        <option value='italian'>Italian</option>
-                        <option value='asian'>Asian</option>
-                        <option value='fusion'>Fusion</option>
-                        <option value='vegan'>Vegan/Vegetarian</option>
-                        <option value='soul-food'>Soul Food</option>
-                        <option value='seafood'>Seafood</option>
-                        <option value='desserts'>Desserts/Cafes</option>
-                      </select>
+                      <div className='grid grid-cols-2 gap-2'>
+                        {[
+                          { id: 'detroit-classics', label: 'Detroit Classics' },
+                          { id: 'mexican', label: 'Mexican' },
+                          { id: 'italian', label: 'Italian' },
+                          { id: 'asian', label: 'Asian' },
+                          { id: 'fusion', label: 'Fusion' },
+                          { id: 'vegan', label: 'Vegan/Vegetarian' },
+                          { id: 'soul-food', label: 'Soul Food' },
+                          { id: 'seafood', label: 'Seafood' },
+                          { id: 'desserts', label: 'Desserts/Cafes' },
+                        ].map(item => (
+                          <div key={item.id}>
+                            <input
+                              type='checkbox'
+                              id={item.id}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  'cuisinePreferences',
+                                  item.label
+                                )
+                              }
+                            />
+                            <label htmlFor={item.id} className='ml-2'>
+                              {item.label}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     {/* Dining Preferences */}
                     <div>
