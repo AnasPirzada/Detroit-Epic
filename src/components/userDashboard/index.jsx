@@ -72,6 +72,8 @@ export default function UserDashboard() {
     title: '',
     startDate: '',
     endDate: '',
+    arrivalTime: '',
+    departureTime: '',
     purpose: '',
     duration: '',
     cuisineType: '',
@@ -139,7 +141,34 @@ export default function UserDashboard() {
 
   const handleInputChange = e => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+      const updatedFormData = { ...prev, [name]: value };
+
+      // Calculate duration if startDate or endDate changes
+      if (name === 'startDate' || name === 'endDate') {
+        updatedFormData.duration = calculateDuration(
+          updatedFormData.startDate,
+          updatedFormData.endDate
+        );
+      }
+
+      return updatedFormData;
+    });
+  };
+
+  const calculateDuration = (startDate, endDate) => {
+    if (!startDate || !endDate) return ''; // Return empty if dates are not set
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return ''; // Invalid dates
+
+    const diffInMilliseconds = end - start;
+    if (diffInMilliseconds < 0) return 'Invalid Dates'; // End date before start date
+
+    const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert milliseconds to days
+    return `${diffInDays + 1} days`; // Add 1 to include the start date
   };
 
   const handleSubmit = async () => {
@@ -922,6 +951,30 @@ export default function UserDashboard() {
                         onChange={handleInputChange}
                       />
                     </div>
+                    {/* time of arrival and time of departure. */}
+                    <div>
+                      <Label>Arrival Time</Label>
+                      <input
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        type='Time'
+                        placeholder=''
+                        name='arrivalTime'
+                        value={formData.arrivalTime}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    {/* Departure Time */}
+                    <div>
+                      <Label>Departure Time</Label>
+                      <input
+                        className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
+                        type='Time'
+                        placeholder=''
+                        name='departureTime'
+                        value={formData.departureTime}
+                        onChange={handleInputChange}
+                      />
+                    </div>
                     {/* Purpose of Visit */}
                     <div>
                       <Label>Purpose of Visit</Label>
@@ -941,21 +994,15 @@ export default function UserDashboard() {
                       </select>
                     </div>
                     {/* Duration */}
-                    <div>
+                    <div className='hidden'>
                       <Label>Duration</Label>
-                      <select
+                      <input
                         className='block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500'
-                        value={formData.duration}
-                        onChange={handleInputChange}
+                        type='text'
                         name='duration'
-                      >
-                        <option value='' disabled selected>
-                          Select duration
-                        </option>
-                        <option value='weekend'>Weekend</option>
-                        <option value='week'>1 Week</option>
-                        <option value='month'>1 Month</option>
-                      </select>
+                        value={formData.duration}
+                        readOnly
+                      />
                     </div>
                     {/* Interests */}
                     <div>
